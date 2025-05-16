@@ -1,5 +1,5 @@
 "use client";
-import { Computer, Moon, Sun, UserRound, LogOut } from "lucide-react";
+import { Computer, Moon, Sun, UserRound, LogOut, Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
 import { useTheme } from "next-themes";
 
 export default function HeaderMenu() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
@@ -35,14 +35,17 @@ export default function HeaderMenu() {
             <DropdownMenuItem onClick={() => setTheme("light")}>
               <Sun />
               Claro
+              {theme === "light" && <Check className="ml-auto" />}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("dark")}>
               <Moon />
               Escuro
+              {theme === "dark" && <Check className="ml-auto" />}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setTheme("system")}>
               <Computer />
               Sistema
+              {theme === "system" && <Check className="ml-auto" />}
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
