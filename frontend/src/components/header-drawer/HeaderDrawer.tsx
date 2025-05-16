@@ -12,11 +12,24 @@ import {
 
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { BadgeDollarSign, ChartArea, List, LogOut, Menu } from "lucide-react";
+import {
+  BadgeDollarSign,
+  ChartArea,
+  List,
+  LogOut,
+  Menu,
+  Monitor,
+  Moon,
+  Sun,
+  X,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 export default function HeaderDrawer() {
   const path = usePathname();
+  const { theme, setTheme } = useTheme();
   return (
     <Drawer direction="left">
       <DrawerTrigger className="lg:hidden">
@@ -24,6 +37,31 @@ export default function HeaderDrawer() {
       </DrawerTrigger>
       <DrawerContent className="gap-1">
         <DrawerHeader className="pt-12 border-b">
+          <div className="absolute top-3 right-3">
+            <ToggleGroup type="single" value={theme}>
+              <ToggleGroupItem
+                value="light"
+                aria-label="Toggle light mode"
+                onClick={() => setTheme("light")}
+              >
+                <Sun className="h-5 w-5" />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="dark"
+                aria-label="Toggle dark mode"
+                onClick={() => setTheme("dark")}
+              >
+                <Moon className="h-5 w-5" />
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="system"
+                aria-label="Toggle system preferred mode"
+                onClick={() => setTheme("system")}
+              >
+                <Monitor className="h-5 w-5" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
           <DrawerTitle>
             <div className="text-2xl">Guilherme Garcia</div>
           </DrawerTitle>
@@ -57,12 +95,17 @@ export default function HeaderDrawer() {
             </li>
           </ul>
         </nav>
-        <DrawerFooter>
-          <DrawerClose>Fechar</DrawerClose>
-          <Button variant="ghost" className="text-destructive hover:text-destructive">
+        <DrawerFooter className="flex flex-row justify-between gap-2">
+          <Button
+            variant="ghost"
+            className="text-destructive hover:text-destructive h-full grow cursor-pointer"
+          >
             <LogOut className="w-6 h-6" />
             Sair
           </Button>
+          <DrawerClose className="cursor-pointer border-1 p-2 rounded-md">
+            <X />
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
@@ -85,7 +128,7 @@ function HeaderDrawerNavButton({
   return (
     <Link href={href} className="flex grow relative">
       <div
-        className={`flex items-center justify-start gap-4 p-5 w-full cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 ${
+        className={`flex items-center justify-start gap-4 p-4 w-full cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 ${
           selected && "text-muted-foreground"
         }`}
       >
