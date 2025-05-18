@@ -1,11 +1,40 @@
+"use client";
 import InputPassword from "@/components/input-password/InputPassword";
 import InputText from "@/components/input-text/InputText";
 import ThemeButton from "@/components/theme-button/ThemeButton";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { useFormStatus } from "react-dom";
+import { register } from "../actions";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+const initialState = {
+  error: {
+    email: undefined,
+    password: undefined,
+    phone: undefined,
+    name: undefined,
+  },
+  message: undefined,
+};
 
 export default function Register() {
+  const [state, formAction] = useActionState(register, initialState);
+  const { pending } = useFormStatus();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.message) {
+      toast.success(state.message);
+      setTimeout(() => {
+        router.push("/login");
+      }, 1000);
+    }
+  }, [state.message]);
+
   return (
     <div className="flex items-center justify-center relative">
       <ThemeButton className="absolute top-4 right-4" />
@@ -27,10 +56,7 @@ export default function Register() {
             </div>
 
             <div className="flex flex-col">
-              <form
-                //onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col justify-center"
-              >
+              <form action={formAction} className="flex flex-col justify-center">
                 <div className="flex flex-col gap-[12px]">
                   <h2 className="text-lg font-bold">Crie sua conta!</h2>
                   <div>
@@ -41,35 +67,42 @@ export default function Register() {
 
                 <div className="flex flex-col gap-[16px] mt-6">
                   <InputText
-                    label="Email"
-                    id="email"
-                    placeholder="Ex.: email@email.com"
-                    //error="Email inválido"
+                    label="Nome completo"
+                    id="name"
+                    name="name"
+                    placeholder="Ex.: Guilherme Silva"
+                    error={state.error?.name}
                   />
 
                   <InputText
                     label="Email"
                     id="email"
+                    name="email"
                     placeholder="Ex.: email@email.com"
-                    //error="Email inválido"
+                    error={state.error?.email}
                   />
 
                   <InputText
-                    label="Email"
-                    id="email"
-                    placeholder="Ex.: email@email.com"
-                    //error="Email inválido"
+                    label="Número de telefone"
+                    id="phone"
+                    name="phone"
+                    placeholder="Ex.: (11) 99999-9999"
+                    error={state.error?.phone}
+                    // ADD MASK FOR PHONE NUMBER AND VALIDATIONS AS WELL
                   />
 
                   <InputPassword
                     label="Senha"
                     id="password"
+                    name="password"
                     placeholder="Ex.: 123546"
-                    //error="Senha inválida"
+                    error={state.error?.password}
                   />
                 </div>
 
-                <Button className="w-full h-[48px] cursor-pointer">Cadastrar</Button>
+                <Button className="w-full h-[48px] cursor-pointer mt-6" disabled={pending}>
+                  Cadastrar
+                </Button>
               </form>
 
               <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
