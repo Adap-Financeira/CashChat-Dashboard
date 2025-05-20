@@ -1,31 +1,20 @@
-import Income from "../models/Income.js";
-import Expense from "../models/Expense.js";
-import userStats from "../models/UserStats.js";
+import Income from "../models/Income";
+import Expense from "../models/Expense";
+import userStats from "../models/UserStats";
+import { defaultCategories } from "../utils/categories";
+import { CustomError } from "../utils/errors";
 
-export const getUserStats = async (req, res) => {
-  const { userId } = req.params;
-
+export const getUserStats = async (userId: string) => {
   try {
     const stats = await userStats.findOne({ userId });
 
     if (!stats) {
-      return res.status(404).json({ error: "Stats not found" });
+      throw new CustomError("Stats not found", 404);
     }
-
-    const defaultCategories = [
-      "gastos fixos",
-      "lazer",
-      "investimento",
-      "conhecimento",
-      "doação",
-      "outro"
-    ];
 
     const userCategories = stats.createdCategories || [];
 
-    const allCategories = Array.from(
-      new Set([...defaultCategories, ...userCategories])
-    );
+    const allCategories = Array.from(new Set([...defaultCategories, ...userCategories]));
 
     const spendingByCategory = await Promise.all(
       allCategories.map(async (category) => {
@@ -67,13 +56,12 @@ export const getUserStats = async (req, res) => {
       })
     );
 
-    res.json({
+    return {
       totalIncome: stats.totalIncome,
       totalSpent: stats.totalSpent,
       spendingByCategory,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch stats" });
+    };
+  } catch (error) {
+    throw error;
   }
 };
