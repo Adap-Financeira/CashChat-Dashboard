@@ -4,7 +4,7 @@ const expenseSchema = new mongoose.Schema({
   userId: String,
   amount: Number,
   description: String,
-  category: { type: String },
+  category: String,
   date: { type: Date, default: Date.now },
   messageId: String,
 });

@@ -2,6 +2,8 @@
 
 import { loginSchema, registerSchema } from "@/schemas/schemas";
 import { LoginFormState, RegisterFormState } from "@/types/auth-form";
+import { getCookie } from "@/utils/get-cookie";
+import { cookies } from "next/headers";
 
 export async function login(formState: LoginFormState, formData: FormData) {
   try {
@@ -22,12 +24,48 @@ export async function login(formState: LoginFormState, formData: FormData) {
       };
     }
 
+    const response = await fetch("http://localhost:5001/api/auth/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(result.data),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error);
+    }
+
+    const rawCookie = response.headers.get("set-cookie");
+
+    if (!rawCookie) {
+      throw new Error("Erro ao realizar login.");
+    }
+
+    const value = getCookie(rawCookie);
+
+    if (!value) {
+      throw new Error("Erro ao realizar login.");
+    }
+
+    (await cookies()).set({
+      name: "token",
+      value,
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
     return {
       message: "Login realizado com sucesso!",
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
-      message: "Erro ao realizar login",
+      message: error.message,
     };
   }
 }
