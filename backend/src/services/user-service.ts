@@ -1,9 +1,9 @@
-import { User } from "../types/User";
 import * as userRepository from "../repositories/user-repository";
 import { CustomError } from "../utils/errors";
 import bcrypt from "bcryptjs";
+import { CreateUserDto } from "../dto/user";
 
-export async function createUser(user: User) {
+export async function createUser(user: CreateUserDto) {
   try {
     const userExists = await userRepository.findByEmail(user.email);
     if (userExists) {

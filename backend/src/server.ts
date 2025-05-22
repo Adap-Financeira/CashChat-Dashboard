@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
 import cookieParser from "cookie-parser";
+// import { createUser } from "./services/user-service";
+// import { IUser } from "./types/User";
+// import { CreateUserDto } from "./dto/user";
 
 dotenv.config();
 const app = express();
@@ -35,11 +38,11 @@ app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 
 // TEST
 
-// const user = {
-//   name: "John Doe",
-//   phoneNumber: "123456789",
-//   email: "john.doe@example.com",
-//   password: "password123",
+// const user: CreateUserDto = {
+//   name: "Guilherme",
+//   phoneNumber: "5512997395911",
+//   email: "guilherme@gmail.com",
+//   password: "123456",
 // };
 
 // createUser(user);

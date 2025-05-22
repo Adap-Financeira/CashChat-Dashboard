@@ -1,8 +1,9 @@
+import { CreateUserDto } from "../dto/user";
 import User from "../models/User";
-import { User as UserType } from "../types/User";
+import { IUser } from "../types/User";
 
-export async function create(user: UserType) {
-  User.create(user);
+export async function create(user: CreateUserDto) {
+  await User.create(user);
 }
 
 export async function findByEmail(email: string) {
@@ -13,6 +14,6 @@ export async function findById(id: string) {
   return await User.findById(id);
 }
 
-export async function update(user: UserType, id: string) {
+export async function update(user: IUser, id: string) {
   return await User.findByIdAndUpdate(id, user);
 }
