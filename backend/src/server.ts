@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
 import cookieParser from "cookie-parser";
+import { PermissionDto } from "./dto/permission";
+import { createPermission } from "./services/permission-services";
 // import { createUser } from "./services/user-service";
 // import { IUser } from "./types/User";
 // import { CreateUserDto } from "./dto/user";
@@ -46,3 +48,13 @@ app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 // };
 
 // createUser(user);
+
+// const permission: PermissionDto = {
+//   userId: "682f980f6af618322bc32b89",
+//   productId: "1111111",
+//   phoneNumber: "5512997395911",
+//   access: false,
+//   expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), //1year from now,
+// };
+
+// createPermission(permission);

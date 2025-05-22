@@ -7,8 +7,6 @@ import { cookies } from "next/headers";
 
 export async function login(formState: LoginFormState, formData: FormData) {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const result = loginSchema.safeParse({
       email: formData.get("email"),
       password: formData.get("password"),
@@ -35,9 +33,13 @@ export async function login(formState: LoginFormState, formData: FormData) {
 
     const data = await response.json();
 
+    console.log(data);
+
     if (!response.ok) {
       throw new Error(data.error);
     }
+
+    console.log("should not run");
 
     const rawCookie = response.headers.get("set-cookie");
 
@@ -64,6 +66,7 @@ export async function login(formState: LoginFormState, formData: FormData) {
       message: "Login realizado com sucesso!",
     };
   } catch (error: any) {
+    console.log("state should update");
     return {
       message: error.message,
     };
@@ -72,8 +75,6 @@ export async function login(formState: LoginFormState, formData: FormData) {
 
 export async function register(formState: RegisterFormState, formData: FormData) {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     const result = registerSchema.safeParse({
       name: formData.get("name"),
       email: formData.get("email"),

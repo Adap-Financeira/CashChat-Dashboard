@@ -5,7 +5,6 @@ import ThemeButton from "@/components/theme-button/ThemeButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { login } from "@/app/actions";
-import { useFormStatus } from "react-dom";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -18,8 +17,7 @@ const initialState = {
 };
 
 export default function Login() {
-  const [state, formAction] = useActionState(login, initialState);
-  const { pending } = useFormStatus();
+  const [state, formAction, pending] = useActionState(login, initialState);
   const router = useRouter();
 
   useEffect(() => {
@@ -79,7 +77,7 @@ export default function Login() {
                   />
                 </div>
 
-                <Button className="w-full h-[48px] cursor-pointer mt-5" disabled={pending}>
+                <Button type="submit" className="w-full h-[48px] cursor-pointer mt-5" disabled={pending}>
                   Entrar
                 </Button>
               </form>
