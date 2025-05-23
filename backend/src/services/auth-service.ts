@@ -3,6 +3,7 @@ import * as userRepository from "../repositories/user-repository";
 import * as permissionRepository from "../repositories/permission-repository";
 import { CustomError } from "../utils/errors";
 import bcrypt from "bcryptjs";
+import { productsIds } from "../utils/products";
 
 export async function login(email: string, password: string) {
   try {
@@ -17,7 +18,10 @@ export async function login(email: string, password: string) {
     }
 
     //Check if user has permission to access the dashboard
-    const permission = await permissionRepository.findByUserId(user._id.toString());
+    const permission = await permissionRepository.findUniqueByUserIdAndProductId(
+      user._id.toString(),
+      productsIds.Dashboard
+    );
     if (!permission?.access) {
       throw new CustomError("Usuário sem acesso a plataforma dashboard.", 401);
     }
