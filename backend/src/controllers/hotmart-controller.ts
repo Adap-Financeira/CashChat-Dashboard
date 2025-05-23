@@ -42,8 +42,10 @@ async function processPermissions(
         console.log(`[processPermissions] Updating existing permission: ${existingPermission._id}`);
         // Update existing permission
         existingPermission.access = true;
-        existingPermission.expiresAt = expiresAt;
-        existingPermission.updatedAt = new Date();
+        if (expiresAt) {
+          existingPermission.expiresAt = expiresAt;
+        }
+        // updatedAt will be automatically set by Mongoose
         await permissionRepository.update(existingPermission, existingPermission._id.toString())
           .catch(err => {
             console.error(`[processPermissions] Error updating permission: ${err}`);
@@ -55,9 +57,9 @@ async function processPermissions(
         const permissionData = {
           userId: user._id.toString(),
           productId: productId,
-          phoneNumber: user.phoneNumber || "00000000000",
+          phoneNumber: user.phoneNumber || "",
           access: true,
-          expiresAt,
+          ...(expiresAt ? { expiresAt } : {}), // Only include expiresAt if it exists
         };
         console.log(`[processPermissions] Permission data: ${JSON.stringify(permissionData)}`);
         
@@ -70,7 +72,7 @@ async function processPermissions(
     } else if (isRefunded && existingPermission) {
       console.log(`[processPermissions] Revoking access for permission: ${existingPermission._id}`);
       existingPermission.access = false;
-      existingPermission.updatedAt = new Date();
+      // updatedAt will be automatically set by Mongoose
       await permissionRepository.update(existingPermission, existingPermission._id.toString())
         .catch(err => {
           console.error(`[processPermissions] Error updating permission for refund: ${err}`);
@@ -173,6 +175,17 @@ export function hotmartController(server: Express) {
       }
       
       console.log(`[webhook] All required fields present, proceeding with processing`);
+      
+      // Combine first and last name if available
+      const fullName = buyerFirstName ? 
+        (buyerLastName ? `${buyerFirstName} ${buyerLastName}` : buyerFirstName) : 
+        undefined;
+      console.log(`[webhook] Combined buyer name: ${fullName || 'undefined'}`);
+
+      // Extract phone number if available
+      const phoneNumber = req.body?.data?.buyer?.checkout_phone || ""; 
+      console.log(`[webhook] Extracted phone number: ${phoneNumber || 'not available'}`);
+
 
       // Check if transaction already exists (idempotency)
       console.log(`[webhook] Checking if transaction already exists with ID: ${transactionId}`);
@@ -189,20 +202,17 @@ export function hotmartController(server: Express) {
         if (existingTransaction.status !== status) {
           console.log(`[webhook] Updating transaction status from ${existingTransaction.status} to ${status}`);
           existingTransaction.status = status;
+          
+          // No additional fields to update
+          
           await existingTransaction.save().catch(err => {
             console.error(`[webhook] Error updating transaction status: ${err}`);
           });
           
           // Process permissions based on updated status
-          // Combine first and last name if available
-          const fullName = buyerFirstName ? 
-            (buyerLastName ? `${buyerFirstName} ${buyerLastName}` : buyerFirstName) : 
-            undefined;
-          console.log(`[webhook] Combined buyer name: ${fullName || 'undefined'}`);
-
           // Find or create user
           console.log(`[webhook] Finding or creating user with email: ${buyerEmail}`);
-          const user = await findOrCreateUser(buyerEmail, fullName).catch(err => {
+          const user = await findOrCreateUser(buyerEmail, fullName, phoneNumber).catch(err => {
             console.error(`[webhook] Error in findOrCreateUser: ${err}`);
             return null;
           });
@@ -226,16 +236,6 @@ export function hotmartController(server: Express) {
         });
         return;
       }
-
-      // Combine first and last name if available
-      const fullName = buyerFirstName ? 
-        (buyerLastName ? `${buyerFirstName} ${buyerLastName}` : buyerFirstName) : 
-        undefined;
-      console.log(`[webhook] Combined buyer name: ${fullName || 'undefined'}`);
-
-      // Extract phone number if available
-      const phoneNumber = req.body?.data?.buyer?.checkout_phone || ""; 
-      console.log(`[webhook] Extracted phone number: ${phoneNumber || 'not available'}`);
 
       // Find or create user
       console.log(`[webhook] Finding or creating user with email: ${buyerEmail}`);
@@ -263,7 +263,7 @@ export function hotmartController(server: Express) {
           hotmartTransactionId: transactionId,
           productId: productId.toString(),
           customerEmail: buyerEmail,
-          status: status || "pending",
+          status: status || "pending"
         };
         console.log(`[webhook] Transaction data: ${JSON.stringify(transactionData)}`);
         

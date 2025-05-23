@@ -3,5 +3,5 @@ export interface PermissionDto {
   productId: string;
   phoneNumber: string;
   access?: boolean;
-  expiresAt: Date;
+  expiresAt?: Date;
 }

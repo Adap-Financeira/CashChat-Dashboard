@@ -66,7 +66,7 @@ export async function processHotmartTransaction(transactionData: {
       // If transaction exists but status has changed, update it
       if (existingTransaction.status !== transactionData.status) {
         existingTransaction.status = transactionData.status;
-        existingTransaction.updatedAt = new Date();
+        // No need to set updatedAt as it's not in the model
         await existingTransaction.save();
       }
       return existingTransaction;
@@ -80,14 +80,13 @@ export async function processHotmartTransaction(transactionData: {
     );
 
     // Create transaction record
+    // Only include fields that exist in the Transaction model
     const transaction = await Transaction.create({
-      email: transactionData.email,
-      transactionId: transactionData.transactionId,
+      customerEmail: transactionData.email,  // Field name is customerEmail in the model
+      hotmartTransactionId: transactionData.transactionId, // Field name is hotmartTransactionId in the model
       productId: transactionData.productId,
       status: transactionData.status,
-      startDate: transactionData.startDate,
-      endDate: transactionData.endDate,
-      permissions: transactionData.permissions,
+      // startDate, endDate, and permissions are not in the Transaction model
     });
 
     // Create or update permissions based on transaction
@@ -98,20 +97,23 @@ export async function processHotmartTransaction(transactionData: {
         transaction.productId
       );
 
+      // Use the endDate from the transaction data since it's not in the Transaction model
+      const expiresAt = transactionData.endDate;
+
       if (existingPermission) {
         // Update existing permission
         existingPermission.access = true;
-        existingPermission.expiresAt = transaction.endDate;
-        existingPermission.updatedAt = new Date();
+        existingPermission.expiresAt = expiresAt;
+        // updatedAt will be automatically set by Mongoose
         await permissionRepository.update(existingPermission, existingPermission._id.toString());
       } else {
         // Create new permission
         await permissionRepository.create({
           userId: user._id.toString(),
           productId: transaction.productId,
-          phoneNumber: user.phoneNumber,
+          phoneNumber: user.phoneNumber || "",
           access: true,
-          expiresAt: transaction.endDate,
+          expiresAt,
         });
       }
     }

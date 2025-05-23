@@ -18,7 +18,7 @@ export async function login(email: string, password: string) {
     }
 
     //Check if user has permission to access the dashboard
-    const permission = await permissionRepository.findUniqueByUserIdAndProductId(
+    const permission = await permissionRepository.findByUserIdAndProductId(
       user._id.toString(),
       productsIds.Dashboard
     );
