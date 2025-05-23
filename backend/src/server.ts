@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 // import { createUser } from "./services/user-service";
 // import { IUser } from "./types/User";
 // import { CreateUserDto } from "./dto/user";
+import { hotmartController } from "./controllers/hotmart-controller";
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ authController(app);
 statsController(app);
 
 const dbName = process.env.NODE_ENV === "prod" ? "prod" : "test";
+hotmartController(app);
 
 mongoose
   .connect(process.env.MONGO_URI!, { dbName })
