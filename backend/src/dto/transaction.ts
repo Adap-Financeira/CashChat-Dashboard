@@ -1,6 +1,9 @@
 export interface TransactionDto {
-  hotmartTransactionId: string;
-  productId: string;
-  customerEmail: string;
-  status: string;
+  userId: string;
+  amount: number;
+  description: string;
+  category: string;
+  date: Date;
+  messageId: string;
+  type: "income" | "expense";
 }

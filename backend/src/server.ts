@@ -2,14 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
-import cookieParser from "cookie-parser";
-import { PermissionDto } from "./dto/permission";
-import { createPermission } from "./services/permission-services";
-// import { createUser } from "./services/user-service";
-// import { IUser } from "./types/User";
-// import { CreateUserDto } from "./dto/user";
 import { hotmartController } from "./controllers/hotmart-controller";
 
 dotenv.config();

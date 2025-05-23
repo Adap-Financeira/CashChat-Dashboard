@@ -1,9 +1,11 @@
 import { Document } from "mongoose";
 
-export interface Transaction extends Document {
-  hotmartTransactionId: string;
-  productId: string;
-  customerEmail: string;
-  createdAt: Date;
-  status: string;
+export interface ITransaction extends Document {
+  userId: string;
+  amount: number;
+  description: string;
+  category: string;
+  date: Date;
+  messageId: string;
+  type: "income" | "expense";
 }

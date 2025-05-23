@@ -1,5 +1,4 @@
-import Income from "../models/Income";
-import Expense from "../models/Expense";
+import Transaction from "../models/Transaction";
 import userStats from "../models/UserStats";
 import { defaultCategories } from "../utils/categories";
 import { CustomError } from "../utils/errors";
@@ -18,10 +17,11 @@ export const getUserStats = async (userId: string) => {
 
     const spendingByCategory = await Promise.all(
       allCategories.map(async (category) => {
-        const expenseResult = await Expense.aggregate([
+        const expenseResult = await Transaction.aggregate([
           {
             $match: {
               userId,
+              type: "expense",
               category: { $regex: new RegExp(`^${category.trim()}$`, "i") },
             },
           },
@@ -33,10 +33,11 @@ export const getUserStats = async (userId: string) => {
           },
         ]);
 
-        const incomeResult = await Income.aggregate([
+        const incomeResult = await Transaction.aggregate([
           {
             $match: {
               userId,
+              type: "income",
               category: { $regex: new RegExp(`^${category.trim()}$`, "i") },
             },
           },

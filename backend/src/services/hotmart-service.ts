@@ -1,9 +1,9 @@
 import * as userRepository from "../repositories/user-repository";
 import * as permissionRepository from "../repositories/permission-repository";
-import Transaction from "../models/Transaction";
-import { CustomError } from "../utils/errors";
-import bcrypt from "bcryptjs";
+import Transaction from "../models/TransactionHotmart";
 import { CreateUserDto } from "../dto/user";
+import * as hotmartRepository from "../repositories/hotmart-repository";
+import { TransactionHotmartDto } from "../dto/transaction-hotmart";
 
 /**
  * Finds or creates a user based on the email
@@ -12,11 +12,7 @@ import { CreateUserDto } from "../dto/user";
  * @param phoneNumber User's phone number (optional)
  * @returns The user object
  */
-export async function findOrCreateUser(
-  email: string,
-  name?: string,
-  phoneNumber?: string
-) {
+export async function findOrCreateUser(email: string, name?: string, phoneNumber?: string) {
   try {
     // Try to find the user first
     const existingUser = await userRepository.findByEmail(email);
@@ -32,7 +28,7 @@ export async function findOrCreateUser(
     };
 
     await userRepository.create(newUser);
-    
+
     // Return the newly created user
     return await userRepository.findByEmail(email);
   } catch (error) {
@@ -81,8 +77,8 @@ export async function processHotmartTransaction(transactionData: {
 
     // Create transaction record
     // Only include fields that exist in the Transaction model
-    const transaction = await Transaction.create({
-      customerEmail: transactionData.email,  // Field name is customerEmail in the model
+    const transaction = await createTransactionHotmart({
+      customerEmail: transactionData.email, // Field name is customerEmail in the model
       hotmartTransactionId: transactionData.transactionId, // Field name is hotmartTransactionId in the model
       productId: transactionData.productId,
       status: transactionData.status,
@@ -119,6 +115,14 @@ export async function processHotmartTransaction(transactionData: {
     }
 
     return transaction;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function createTransactionHotmart(data: TransactionHotmartDto) {
+  try {
+    return await hotmartRepository.create(data);
   } catch (error) {
     throw error;
   }

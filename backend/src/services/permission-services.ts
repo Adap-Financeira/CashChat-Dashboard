@@ -4,7 +4,7 @@ import { CustomError } from "../utils/errors";
 
 export async function createPermission(permission: PermissionDto) {
   try {
-    const permissionExists = await permissionRepository.findUniqueByUserIdAndProductId(
+    const permissionExists = await permissionRepository.findByUserIdAndProductId(
       permission.userId,
       permission.productId
     );
