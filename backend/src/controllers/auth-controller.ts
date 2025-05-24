@@ -40,27 +40,12 @@ export function authController(server: Express) {
       res.cookie("token", response.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "prod", // Only over HTTPS
-        sameSite: "none", // Or 'Strict' for extra CSRF protection
+        sameSite: "strict", // Or 'Strict' for extra CSRF protection
         maxAge: 1000 * 60 * 15, // 15 minutes
       });
 
       res.status(200).json({ message: "Login successful" });
     } catch (error) {
-      if (error instanceof CustomError) {
-        res.status(error.statusCode).json({ error: error.message });
-        return;
-      }
-
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-
-  authRouter.get("/example", authValidator, async (req: Request, res: Response) => {
-    try {
-      res.status(200).json({ message: "Example", userId: req.userId });
-    } catch (error) {
-      console.log(error);
-
       if (error instanceof CustomError) {
         res.status(error.statusCode).json({ error: error.message });
         return;

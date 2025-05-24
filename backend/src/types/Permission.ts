@@ -1,6 +1,7 @@
-import { Document } from "mongoose";
+import { Types } from "mongoose";
 
-export interface IPermission extends Document {
+export interface IPermission {
+  _id: Types.ObjectId;
   userId: string;
   productId: string;
   phoneNumber: string;

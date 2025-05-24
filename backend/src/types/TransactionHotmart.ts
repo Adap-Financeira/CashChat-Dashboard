@@ -1,6 +1,7 @@
-import { Document } from "mongoose";
+import { Types } from "mongoose";
 
-export interface ITransactionHotmart extends Document {
+export interface ITransactionHotmart {
+  _id: Types.ObjectId;
   hotmartTransactionId: string;
   productId: string;
   customerEmail: string;

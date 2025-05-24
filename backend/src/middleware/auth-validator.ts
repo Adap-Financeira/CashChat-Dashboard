@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { IUser } from "../types/User";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -20,15 +19,19 @@ export default async function authValidator(req: Request, res: Response, next: N
     }
 
     const user_token = jwt.verify(cookieToken, process.env.JWT_SECRET!) as {
-      user: IUser;
+      _id: string;
+      name: string;
+      email: string;
+      phoneNumber: string;
       iat: number;
       exp: number;
     };
 
-    req.userId = user_token.user._id as string;
+    req.userId = user_token._id;
 
     next();
   } catch (error) {
+    console.log(error);
     res.status(401).send({
       message: "Token inválido ou expirado.",
     });

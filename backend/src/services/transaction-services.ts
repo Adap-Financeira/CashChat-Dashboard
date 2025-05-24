@@ -8,3 +8,13 @@ export async function createTransaction(transaction: TransactionDto) {
     throw error;
   }
 }
+
+export async function getAllTransactions() {
+  try {
+    const transactions = await transactionRepository.getAll();
+
+    return transactions;
+  } catch (error) {
+    throw error;
+  }
+}

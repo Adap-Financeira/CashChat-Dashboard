@@ -1,6 +1,7 @@
-import { Document } from "mongoose";
+import { Types } from "mongoose";
 
-export interface ITransaction extends Document {
+export interface ITransaction {
+  _id: Types.ObjectId;
   userId: string;
   amount: number;
   description: string;

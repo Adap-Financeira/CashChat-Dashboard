@@ -26,7 +26,14 @@ export async function login(email: string, password: string) {
       throw new CustomError("Usuário sem acesso a plataforma dashboard.", 401);
     }
 
-    const token = jwt.sign({ ...user }, process.env.JWT_SECRET!, { expiresIn: "1d" });
+    const payload = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+    };
+
+    const token = jwt.sign({ ...payload }, process.env.JWT_SECRET!, { expiresIn: "1d" });
 
     return {
       token,
