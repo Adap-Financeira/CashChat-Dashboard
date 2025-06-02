@@ -12,9 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function HeaderMenu() {
   const { theme, setTheme } = useTheme();
+  const { logout } = useAuth();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
@@ -49,7 +52,7 @@ export default function HeaderMenu() {
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => logout()}>
           <LogOut />
           Sair
         </DropdownMenuItem>

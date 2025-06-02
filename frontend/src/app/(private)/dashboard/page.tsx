@@ -1,4 +1,5 @@
 import DateFilter from "@/components/date-filter/DateFilter";
+import { useAuth } from "@/context/AuthProvider";
 import { parseDateStringsToObjects, validateOrDefaultDateStrings } from "@/utils/date";
 import { redirect } from "next/navigation";
 

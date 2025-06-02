@@ -10,8 +10,6 @@ export interface RegisterFormState {
   error?: {
     email?: string;
     password?: string;
-    phone?: string;
-    name?: string;
   };
   message?: string;
 }

@@ -12,24 +12,16 @@ import {
 
 import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-  BadgeDollarSign,
-  ChartArea,
-  List,
-  LogOut,
-  Menu,
-  Monitor,
-  Moon,
-  Sun,
-  X,
-} from "lucide-react";
+import { BadgeDollarSign, ChartArea, List, LogOut, Menu, Monitor, Moon, Sun, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function HeaderDrawer() {
   const path = usePathname();
   const { theme, setTheme } = useTheme();
+  const { logout } = useAuth();
   return (
     <Drawer direction="left">
       <DrawerTrigger className="lg:hidden">
@@ -39,18 +31,10 @@ export default function HeaderDrawer() {
         <DrawerHeader className="pt-12 border-b">
           <div className="absolute top-3 right-3">
             <ToggleGroup type="single" value={theme}>
-              <ToggleGroupItem
-                value="light"
-                aria-label="Toggle light mode"
-                onClick={() => setTheme("light")}
-              >
+              <ToggleGroupItem value="light" aria-label="Toggle light mode" onClick={() => setTheme("light")}>
                 <Sun className="h-5 w-5" />
               </ToggleGroupItem>
-              <ToggleGroupItem
-                value="dark"
-                aria-label="Toggle dark mode"
-                onClick={() => setTheme("dark")}
-              >
+              <ToggleGroupItem value="dark" aria-label="Toggle dark mode" onClick={() => setTheme("dark")}>
                 <Moon className="h-5 w-5" />
               </ToggleGroupItem>
               <ToggleGroupItem
@@ -99,6 +83,7 @@ export default function HeaderDrawer() {
           <Button
             variant="ghost"
             className="text-destructive hover:text-destructive h-full grow cursor-pointer"
+            onClick={() => logout()}
           >
             <LogOut className="w-6 h-6" />
             Sair
@@ -119,12 +104,7 @@ interface HeaderDrawerNavButtonProps {
   selected?: boolean;
 }
 
-function HeaderDrawerNavButton({
-  label,
-  href,
-  icon,
-  selected = false,
-}: HeaderDrawerNavButtonProps) {
+function HeaderDrawerNavButton({ label, href, icon, selected = false }: HeaderDrawerNavButtonProps) {
   return (
     <Link href={href} className="flex grow relative">
       <div
