@@ -17,3 +17,7 @@ export async function findById(id: string) {
 export async function update(user: IUser, id: string) {
   return await User.findByIdAndUpdate(id, user);
 }
+
+export async function setFirebaseId(email: string, firebaseId: string) {
+  return await User.findOneAndUpdate({ email }, { firebaseId });
+}

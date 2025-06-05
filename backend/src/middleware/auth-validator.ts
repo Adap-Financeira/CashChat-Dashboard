@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import admin from "../lib/firebase-admin";
 
 declare module "express-serve-static-core" {
   interface Request {
-    userId: string;
+    firebaseId: string;
+    email: string;
   }
 }
 
@@ -18,16 +19,19 @@ export default async function authValidator(req: Request, res: Response, next: N
       return;
     }
 
-    const user_token = jwt.verify(cookieToken, process.env.JWT_SECRET!) as {
-      _id: string;
-      name: string;
-      email: string;
-      phoneNumber: string;
-      iat: number;
-      exp: number;
-    };
+    const decodedToken = await admin.auth().verifyIdToken(cookieToken);
 
-    req.userId = user_token._id;
+    // const user_token = jwt.verify(cookieToken, process.env.JWT_SECRET!) as {
+    //   _id: string;
+    //   name: string;
+    //   email: string;
+    //   phoneNumber: string;
+    //   iat: number;
+    //   exp: number;
+    // };
+
+    req.firebaseId = decodedToken.uid;
+    req.email = decodedToken.email!;
 
     next();
   } catch (error) {
