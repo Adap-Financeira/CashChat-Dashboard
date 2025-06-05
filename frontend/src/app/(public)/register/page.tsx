@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { registerSchema } from "@/schemas/schemas";
 import { FirebaseError } from "firebase/app";
+import { ID_TOKEN_COOKIE, useAuth } from "@/context/AuthProvider";
+import { setCookie } from "@/app/actions";
+import { useRouter } from "next/navigation";
 
 interface FormErrors {
   email: string | undefined;
@@ -24,6 +25,8 @@ export default function Register() {
     password: undefined,
   });
   const [pending, setPending] = useState(false);
+  const { createUser, deleteAccount } = useAuth();
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -43,8 +46,59 @@ export default function Register() {
         setPending(false);
         return;
       }
-      const response = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Check if the email is valid for registration
+      const isEmailValid = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        cache: "no-store",
+      });
+
+      const { isValid } = await isEmailValid.json();
+      if (!isValid) {
+        toast.error("Esse email é inválido para cadastro no dashboard.");
+        setPending(false);
+        return;
+      }
+
+      // Create a new user in firebase
+      const newUser = await createUser(email, password);
+
+      // Get the uid token of the user
+      const token = await newUser.user.getIdToken();
+
+      // Set the cookie with user token
+      await setCookie(token, ID_TOKEN_COOKIE);
+
+      // Perform fetch passing the token in the cookie to link this firebase
+      // user with the user created in mongodb
+      const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/link-account`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `token=${token};`,
+        },
+        credentials: "include",
+        cache: "no-store",
+      });
+
+      const user = await data.json();
+      console.log(user);
+      if (data.status !== 200) {
+        toast.error(user.error);
+        await deleteAccount(newUser.user);
+        setPending(false);
+        return;
+      }
+
+      toast.success("Conta criada com sucesso, você será redirecionado para a tela de login.");
+      router.push("/login");
     } catch (error) {
+      console.log(error);
+
       if (error instanceof FirebaseError) {
         if (error.code === "auth/email-already-in-use") {
           toast.error("Esse email já foi cadastrado.");

@@ -6,7 +6,10 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
+  createUserWithEmailAndPassword,
   User,
+  UserCredential,
+  deleteUser,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { removeCookie, setCookie } from "@/app/actions";
@@ -17,6 +20,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  deleteAccount: (user: User) => Promise<void>;
+  createUser: (email: string, password: string) => Promise<UserCredential>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,9 +30,13 @@ const AuthContext = createContext<AuthContextType>({
   login: async () => {},
   logout: async () => {},
   resetPassword: async () => {},
+  deleteAccount: async () => {},
+  createUser: async () => {
+    throw new Error("createUser not implemented");
+  },
 });
 
-const ID_TOKEN_COOKIE = "token";
+export const ID_TOKEN_COOKIE = "token";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -37,8 +46,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
       setLoading(true);
       if (firebaseUser) {
-        setUser(firebaseUser);
         try {
+          const isNewUser = firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime;
+          if (isNewUser) {
+            setLoading(false);
+            return; // Skip the rest of the logic
+          }
+
+          setUser(firebaseUser);
+
           const token = await firebaseUser.getIdToken();
           await setCookie(token, ID_TOKEN_COOKIE);
           console.log("ID Token cookie set/updated.");
@@ -59,6 +75,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  async function createUser(email: string, password: string) {
+    return await createUserWithEmailAndPassword(auth, email, password);
+  }
+
   async function login(email: string, password: string) {
     await signInWithEmailAndPassword(auth, email, password);
   }
@@ -67,14 +87,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await signOut(auth);
   }
 
-  async function resetPassword(email: string) {
-    console.log("xxx");
+  async function deleteAccount(user: User) {
+    await deleteUser(user);
+  }
 
+  async function resetPassword(email: string) {
     await sendPasswordResetEmail(auth, email);
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, resetPassword, createUser, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

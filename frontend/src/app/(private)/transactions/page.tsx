@@ -28,7 +28,7 @@ export default async function Transactions({
 
   // We should call the fetch api here with the startDate and endDate
   // Create in the backend the endpoint to retrieve all user transactions in the specified period
-  const data = await fetch(`${process.env.API_URL}/api/transaction/all`, {
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transaction/all`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

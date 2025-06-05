@@ -46,7 +46,25 @@ export default function Login() {
         return;
       }
 
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login-dashboard`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        cache: "no-store",
+      });
+
+      const data = await response.json();
+
+      if (response.status !== 200) {
+        toast.error(data.error);
+        setPending(false);
+        return;
+      }
+
       await login(email, password);
+      toast.success("Login realizado com sucesso.");
 
       router.push("/dashboard");
     } catch (error) {
