@@ -1,4 +1,5 @@
 "use client";
+import Header from "@/components/header/Header";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -21,5 +22,10 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex flex-col min-h-screen w-full">
+      <Header />
+      <div className="py-18 px-[var(--padding)] lg:py-22">{children}</div>
+    </div>
+  );
 }

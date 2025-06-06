@@ -19,7 +19,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isToday(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getToday() + "&to=" + getToday());
+          redirect("?from=" + getToday() + "&to=" + getToday());
         }}
       >
         Hoje
@@ -27,7 +27,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isWeek(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getCurrentWeek().startDate + "&to=" + getCurrentWeek().endDate);
+          redirect("?from=" + getCurrentWeek().startDate + "&to=" + getCurrentWeek().endDate);
         }}
       >
         Semana
@@ -35,7 +35,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isMonth(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getCurrentMonth().startDate + "&to=" + getCurrentMonth().endDate);
+          redirect("?from=" + getCurrentMonth().startDate + "&to=" + getCurrentMonth().endDate);
         }}
       >
         Mês

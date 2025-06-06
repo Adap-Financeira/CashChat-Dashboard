@@ -16,3 +16,8 @@ export async function setCookie(value: string, name?: string) {
 export async function removeCookie(name: string) {
   (await cookies()).delete(name);
 }
+
+export async function getCookie(name: string) {
+  return (await cookies()).get(name)?.value ?? "";
+}
+

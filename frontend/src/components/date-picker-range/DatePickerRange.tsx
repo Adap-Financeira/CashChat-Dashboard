@@ -62,7 +62,7 @@ export function DatePickerWithRange({ className, from, to }: DatePickerWithRange
               if (newDate?.from && newDate?.to) {
                 const fromStr = format(newDate.from, "dd/MM/yyyy");
                 const toStr = format(newDate.to, "dd/MM/yyyy");
-                redirect(`/dashboard?from=${fromStr}&to=${toStr}`);
+                redirect(`?from=${fromStr}&to=${toStr}`);
               }
               setDate(newDate);
             }}

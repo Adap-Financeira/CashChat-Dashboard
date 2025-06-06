@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { paymentMethods } from "@/utils/payments";
 
 export type Transaction = {
   id: string;
@@ -47,16 +48,34 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
   {
+    accessorKey: "paymentMethod",
+    cell: ({ row }) => {
+      const paymentMethod = row.getValue("paymentMethod") as string;
+      return <div>{paymentMethods[paymentMethod as keyof typeof paymentMethods] || "n/a"}</div>;
+    },
+    header: "Forma de pagamento",
+  },
+  {
+    accessorKey: "status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as string;
+      return <div>{status === "completed" ? "Concluído" : "Pendente"}</div>;
+    },
+    header: "Status",
+  },
+  {
     accessorKey: "type",
     cell: ({ row }) => {
       const type = row.getValue("type") as string;
       return (
-        <div className={`px-2 ${type === "income" ? "bg-green-500" : "bg-red-500"} w-fit rounded-md`}>
-          {type === "income" ? "Recebimento" : "Despesa"}
+        <div className="flex justify-center items-center">
+          <span className={`px-2 ${type === "income" ? "bg-green-500" : "bg-red-500"}  w-4 h-4 rounded-full`}>
+            {/* {type === "income" ? "Recebimento" : "Despesa"} */}
+          </span>
         </div>
       );
     },
-    header: "Tipo",
+    header: () => <div className="text-center">Tipo</div>,
   },
   {
     accessorKey: "amount",
