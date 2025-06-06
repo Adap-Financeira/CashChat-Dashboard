@@ -8,6 +8,13 @@ const transactionSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   messageId: { type: String, required: true },
   type: { type: String, required: true },
+  paymentMethod: { type: String, required: true },
+  status: { type: String, required: true },
+  installmentsCount: { type: Number, required: false },
+  installmentsCurrent: { type: Number, required: false },
+  installmentsGroupId: { type: String, required: false },
 });
 
 export default mongoose.model("Transactions", transactionSchema);
+
+// P
