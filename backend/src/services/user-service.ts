@@ -4,6 +4,20 @@ import bcrypt from "bcryptjs";
 import { CreateUserDto } from "../dto/user";
 import { UpdateUser } from "../types/User";
 
+export async function findUserByEmail(email: string) {
+  try {
+    const userExists = await userRepository.findByEmail(email);
+
+    if (!userExists) {
+      throw new CustomError("Usuário não encontrado.", 404);
+    }
+
+    return userExists;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function createUser(user: CreateUserDto) {
   try {
     const userExists = await userRepository.findByEmail(user.email);

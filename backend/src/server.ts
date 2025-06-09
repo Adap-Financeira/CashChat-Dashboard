@@ -7,6 +7,8 @@ import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
 import { hotmartController } from "./controllers/hotmart-controller";
 import { transactionController } from "./controllers/transaction-controller";
+import { colorsController } from "./controllers/colors-controller";
+import { categoryController } from "./controllers/category-controller";
 
 dotenv.config();
 const app = express();
@@ -23,6 +25,8 @@ app.use(cookieParser());
 authController(app);
 statsController(app);
 transactionController(app);
+colorsController(app);
+categoryController(app);
 
 const dbName = process.env.NODE_ENV === "prod" ? "prod" : "test";
 hotmartController(app);
