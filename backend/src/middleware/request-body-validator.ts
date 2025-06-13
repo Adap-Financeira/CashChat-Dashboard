@@ -8,7 +8,7 @@ export default function validateRequestBody(schema: ZodSchema) {
 
       next();
     } catch (error: any) {
-      response.status(400).send("Informe os campos obrigatórios corretamente.");
+      response.status(400).json({ error: "Informe os campos obrigatórios corretamente." });
     }
   };
 }
