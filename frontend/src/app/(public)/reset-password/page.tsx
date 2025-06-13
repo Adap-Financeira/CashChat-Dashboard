@@ -1,5 +1,5 @@
 "use client";
-import InputText from "@/components/input-text/InputText";
+import InputText from "@/components/inputs/InputText";
 import ThemeButton from "@/components/theme-button/ThemeButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

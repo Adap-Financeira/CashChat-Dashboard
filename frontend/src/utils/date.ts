@@ -127,3 +127,10 @@ export function isMonth(startDate: Date, endDate: Date) {
     endDate?.toDateString() === getEndOfMonth(new Date()).toDateString()
   );
 }
+
+export function getTomorrow(): Date {
+  const now = new Date();
+  const tomorrow = new Date(now); // clone the date
+  tomorrow.setDate(now.getDate() + 1); // add 1 day
+  return tomorrow;
+}

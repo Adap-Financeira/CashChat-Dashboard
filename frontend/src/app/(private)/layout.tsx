@@ -14,6 +14,9 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     }
   }, [user, loading, router]);
 
+  console.log(user);
+  console.log(loading);
+
   if (loading) {
     return <div className="flex items-center justify-center h-screen">Carregando...</div>;
   }

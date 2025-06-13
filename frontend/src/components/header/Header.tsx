@@ -1,7 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
-import HeaderDrawer from "../header-drawer/HeaderDrawer";
-import HeaderMenu from "../header-menu/HeaderMenu";
+import HeaderDrawer from "./drawer/HeaderDrawer";
+import HeaderMenu from "./menu/HeaderMenu";
 import NavButton from "../nav-button/NavButton";
 
 export default function Header() {
@@ -13,11 +13,8 @@ export default function Header() {
         <nav className="flex gap-5 items-center">
           <div className="gap-5 items-center hidden lg:flex">
             <NavButton label="Dashboard" href="/dashboard" selected={path === "/dashboard"} />
-            <NavButton
-              label="Transações"
-              href="/transactions"
-              selected={path === "/transactions"}
-            />
+            <NavButton label="Transações" href="/transactions" selected={path === "/transactions"} />
+            <NavButton label="Lembretes" href="/reminders" selected={path === "/reminders"} />
             <NavButton label="Categorias" href="/categories" selected={path === "/categories"} />
             <HeaderMenu />
           </div>

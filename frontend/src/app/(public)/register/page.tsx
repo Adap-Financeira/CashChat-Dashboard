@@ -1,6 +1,6 @@
 "use client";
-import InputPassword from "@/components/input-password/InputPassword";
-import InputText from "@/components/input-text/InputText";
+import InputPassword from "@/components/inputs/InputPassword";
+import InputText from "@/components/inputs/InputText";
 import ThemeButton from "@/components/theme-button/ThemeButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

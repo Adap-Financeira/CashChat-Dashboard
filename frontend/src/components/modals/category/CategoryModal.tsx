@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { ColorToggleGroup } from "@/components/color-toggle-group/ColorToggleGroup";
 import { toast } from "sonner";
 import { getCookie } from "@/app/actions";
-import InputText from "@/components/input-text/InputText";
+import InputText from "@/components/inputs/InputText";
 
 interface CategoryModalProps {
   children: React.ReactNode;

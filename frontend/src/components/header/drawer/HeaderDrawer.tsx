@@ -10,12 +10,12 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { BadgeDollarSign, ChartArea, List, LogOut, Menu, Monitor, Moon, Sun, X } from "lucide-react";
+import { BadgeDollarSign, ChartArea, List, LogOut, Menu, Monitor, Moon, Sun, Timer, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useAuth } from "@/context/AuthProvider";
 
 export default function HeaderDrawer() {
@@ -67,6 +67,14 @@ export default function HeaderDrawer() {
                 href="/transactions"
                 icon={<BadgeDollarSign className="w-6 h-6" />}
                 selected={path === "/transactions"}
+              />
+            </li>
+            <li>
+              <HeaderDrawerNavButton
+                label="Lembretes"
+                href="/reminders"
+                icon={<Timer className="w-6 h-6" />}
+                selected={path === "/reminders"}
               />
             </li>
             <li>

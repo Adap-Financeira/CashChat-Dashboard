@@ -39,6 +39,9 @@ async function getColors() {
   return data;
 }
 
+// Check if user has permission
+// If not, block the buttons for create, edit or delete categories
+
 export default async function CategoriesPage() {
   const colors = await getColors();
   const categories = await getCategories();
