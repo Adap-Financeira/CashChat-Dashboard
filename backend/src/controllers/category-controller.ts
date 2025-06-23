@@ -49,8 +49,6 @@ export function categoryController(server: Express) {
     validatePermission("categories"),
     async (req: Request, res: Response) => {
       try {
-        console.log("here?");
-
         await createCategoryWithEmail(req.body, req.email);
 
         res.status(200).json({ message: "Categoria criada com sucesso." });

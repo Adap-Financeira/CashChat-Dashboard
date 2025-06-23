@@ -43,19 +43,22 @@ export async function createCategoryWithEmail(categoryDto: CreateCategoryDto, em
 }
 
 export async function updateCategory(categoryDto: UpdateCategoryDto) {
+  console.log(categoryDto);
   // Check if category already exists
   const categoryExists = categoryDto.name
     ? await categoryRepository.getByName(categoryDto.name.toLowerCase())
     : null;
 
-  if (categoryExists && categoryDto.name) {
+  console.log(categoryExists);
+
+  if (categoryExists && categoryDto.categoryId !== categoryExists._id.toString()) {
     throw new CustomError("Essa categoria já existe.", 400);
   }
 
   // Check if colors exists
   const colorsExists = categoryDto.color ? await colorsRepository.getByValue(categoryDto.color) : null;
 
-  if (!colorsExists && categoryDto.color) {
+  if (!colorsExists) {
     throw new CustomError("Essa cor não foi encontrada ou não esta disponivel no momento.", 404);
   }
   return categoryRepository.update(categoryDto.categoryId, categoryDto);
