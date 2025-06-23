@@ -1,8 +1,18 @@
-type PaymentMethod = "cash" | "credit-card" | "debit-card" | "pix";
+export type PaymentMethod = "cash" | "credit" | "debit" | "pix" | "vr" | "va" | "paypal";
 
 export const paymentMethods: Record<PaymentMethod, string> = {
-  "cash": "Dinheiro",
-  "credit-card": "Cartão de Crédito",
-  "debit-card": "Cartão de Débito",
-  "pix": "PIX",
+  cash: "Dinheiro",
+  credit: "Crédito",
+  debit: "Débito",
+  pix: "Pix",
+  vr: "VR",
+  va: "VA",
+  paypal: "PayPal",
 };
+
+export function getPaymentMethodKeyByLabel(label: string): PaymentMethod | undefined {
+  const entry = Object.entries(paymentMethods).find(
+    ([_, value]) => value.toLowerCase() === label.toLowerCase()
+  );
+  return entry?.[0] as PaymentMethod | undefined;
+}

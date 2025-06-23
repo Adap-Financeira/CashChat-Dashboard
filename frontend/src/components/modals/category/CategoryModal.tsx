@@ -14,8 +14,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { ColorToggleGroup } from "@/components/color-toggle-group/ColorToggleGroup";
 import { toast } from "sonner";
-import { getCookie } from "@/app/actions";
 import InputText from "@/components/inputs/InputText";
+import { createCategory, updateCategory } from "@/api/categories";
 
 interface CategoryModalProps {
   children: React.ReactNode;
@@ -48,6 +48,11 @@ export default function CategoryModal({ children, data, colors }: CategoryModalP
 
   const isEdition = !!data;
 
+  function resetFormValues() {
+    setName("");
+    setColor("");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     try {
       e.preventDefault();
@@ -59,45 +64,22 @@ export default function CategoryModal({ children, data, colors }: CategoryModalP
         });
         return;
       }
-      const token = await getCookie("token");
+
+      setFormErrors({
+        name: undefined,
+        color: undefined,
+      });
 
       const response = !isEdition
-        ? await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/create`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Cookie: `token=${token};`,
-            },
-            body: JSON.stringify({ name, color }),
-            cache: "no-store",
-            credentials: "include",
-          })
-        : await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/update`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Cookie: `token=${token};`,
-            },
-            body: JSON.stringify({ name, color, categoryId: data?.id }),
-            cache: "no-store",
-            credentials: "include",
-          });
+        ? await createCategory(name, color)
+        : await updateCategory(name, color, data?.id);
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        toast.error(responseData.error);
-        setLoading(false);
-        return;
-      }
-
-      toast.success(responseData.message);
-      setName("");
-      setColor("");
-      setLoading(false);
+      toast.success(response.message);
+      !isEdition && resetFormValues();
       setOpen(false);
-    } catch (error) {
-      toast.error("Erro ao criar categoria.");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       setLoading(false);
     }
   }

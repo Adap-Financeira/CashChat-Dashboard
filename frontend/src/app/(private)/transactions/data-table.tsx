@@ -16,6 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Input } from "@/components/ui/input";
+import CreateTransactionModal from "@/components/modals/transaction/CreateTransactionModal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,13 +44,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between gap-4">
         <Input
           placeholder="Filter description..."
           value={(table.getColumn("description")?.getFilterValue() as string) ?? ""}
           onChange={(event) => table.getColumn("description")?.setFilterValue(event.target.value)}
-          className="max-w-sm"
+          className="md:max-w-sm max-w-[50vw]"
         />
+
+        <CreateTransactionModal>
+          <Button>Adicionar transação</Button>
+        </CreateTransactionModal>
       </div>
       <div className="rounded-md border">
         <Table>

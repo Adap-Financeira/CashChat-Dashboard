@@ -1,9 +1,9 @@
 import DateFilter from "@/components/date-filter/DateFilter";
 import { parseDateStringsToObjects, validateOrDefaultDateStrings } from "@/utils/date";
 import { redirect } from "next/navigation";
-import { getCookie } from "@/app/actions";
 import { DataTable } from "./data-table";
 import { columns } from "./colums";
+import { getTransactions } from "@/api/transactions";
 
 export default async function Transactions({
   searchParams,
@@ -20,23 +20,8 @@ export default async function Transactions({
   // startDate and endDate will always be in the format dd/MM/yyyy
   const { startDate, endDate } = validateOrDefaultDateStrings(from || "", to || "");
 
-  const cookie = await getCookie("token");
-
-  // We should call the fetch api here with the startDate and endDate
-  // Create in the backend the endpoint to retrieve all user transactions in the specified period
-  const data = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/transaction/all?from=${startDate}&to=${endDate}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `token=${cookie};`,
-      },
-      credentials: "include",
-      cache: "no-store",
-    }
-  );
-  const transactions = await data.json();
+  const transactions = await getTransactions(startDate, endDate);
+  console.log(transactions);
 
   // this will return Date objects of the string dates above
   const { startDate: startObj, endDate: endObj } = parseDateStringsToObjects(startDate, endDate);

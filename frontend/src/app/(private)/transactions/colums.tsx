@@ -1,28 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { paymentMethods } from "@/utils/payments";
-
-export type Transaction = {
-  id: string;
-  userId: string;
-  amount: number;
-  description: string;
-  category: string;
-  date: Date;
-  messageId: string;
-  type: "income" | "expense";
-};
+import { PaymentMethod, paymentMethods } from "@/utils/payments";
+import DataTableRowActions from "./data-table-row-actions";
+import { Transaction } from "@/types/transaction";
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -50,8 +33,8 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "paymentMethod",
     cell: ({ row }) => {
-      const paymentMethod = row.getValue("paymentMethod") as string;
-      return <div>{paymentMethods[paymentMethod as keyof typeof paymentMethods] || "n/a"}</div>;
+      const paymentMethod = row.getValue("paymentMethod") as PaymentMethod;
+      return <div>{paymentMethods[paymentMethod] || "n/a"}</div>;
     },
     header: "Forma de pagamento",
   },
@@ -110,36 +93,8 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     id: "actions",
-    cell: () => {
-      return (
-        <div className="flex justify-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 justify-center">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                {" "}
-                <Edit className="mr-2 h-4 w-4" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                {" "}
-                <Copy className="mr-2 h-4 w-4" />
-                Copiar
-              </DropdownMenuItem>
-              <DropdownMenuItem variant="destructive">
-                {" "}
-                <Trash className="mr-2 h-4 w-4 text-red-500" /> Apagar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      );
+    cell: ({ row }) => {
+      return <DataTableRowActions transaction={row.original} />;
     },
   },
 ];

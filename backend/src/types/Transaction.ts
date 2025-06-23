@@ -6,14 +6,12 @@ export interface ITransaction {
   userId: string;
   amount: number;
   description: string;
-  category: string;
+  categoryId: { name: string; _id: Types.ObjectId };
   date: Date;
   messageId: string;
   type: "income" | "expense";
   status: "pending" | "completed";
-  paymentMethod: "cash" | "credit" | "debit" | "pix";
-
-  //Only for expenses
+  paymentMethodId: { type: string; _id: Types.ObjectId };
   installmentsCount: number; // Total of installments
   installmentsCurrent: number; // Current installment
   installmentsGroupId: string; // Id for all installments of the same buy
@@ -24,26 +22,23 @@ export interface CreateTransaction {
   userId: string;
   amount: number;
   description: string;
-  category: string;
+  categoryId: string;
   date: Date;
   messageId: string;
   type: "income" | "expense";
   status: "pending" | "completed";
-  paymentMethod: "cash" | "credit" | "debit" | "pix";
+  paymentMethodId: string;
+  installmentsCount?: number;
+  installmentsCurrent?: number;
+  installmentsGroupId?: string;
 }
 
-// Type for the transaction with installments to be created
-export interface CreateInstallmentTransaction {
-  userId: string;
-  amount: number;
-  description: string;
-  category: string;
-  date: Date;
-  messageId: string;
-  type: "income" | "expense";
-  status: "pending" | "completed";
-  paymentMethod: "cash" | "credit" | "debit" | "pix";
-  installmentsCount: number;
-  installmentsCurrent: number;
-  installmentsGroupId: string;
+// Type for the transaction to be updated
+export interface UpdateTransaction {
+  amount?: number;
+  description?: string;
+  categoryId?: string;
+  date?: Date;
+  type?: "income" | "expense";
+  status?: "pending" | "completed";
 }

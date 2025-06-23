@@ -1,43 +1,6 @@
-import { getCookie } from "@/app/actions";
+import { getColors } from "@/api/colors";
+import { getCategories } from "@/api/categories";
 import Categories from "@/components/categories/Categories";
-
-async function getCategories() {
-  const token = await getCookie("token");
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/all`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: `token=${token};`,
-    },
-    cache: "no-store",
-    credentials: "include",
-  });
-  const data: {
-    _id: string;
-    name: string;
-    color: string;
-  }[] = await response.json();
-  return data;
-}
-
-async function getColors() {
-  const token = await getCookie("token");
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/colors/all`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: `token=${token};`,
-    },
-    cache: "no-store",
-    credentials: "include",
-  });
-  const data: {
-    id: string;
-    name: string;
-    value: string;
-  }[] = await response.json();
-  return data;
-}
 
 // Check if user has permission
 // If not, block the buttons for create, edit or delete categories

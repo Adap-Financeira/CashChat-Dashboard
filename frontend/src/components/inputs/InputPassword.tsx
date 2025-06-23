@@ -16,7 +16,7 @@ export default function InputPassword({ label, error, ...props }: InputPasswordP
       <Label className="text-md mb-2" htmlFor={props.id}>
         {label}
       </Label>
-      <Input type={isView ? "text" : "password"} className="px-5 h-[56px]" {...props} />
+      <Input type={isView ? "text" : "password"} className="px-5 h-[40px]" {...props} />
       {error && <span className="text-sm text-red-400">{error}</span>}
       <button
         type="button"
@@ -24,9 +24,9 @@ export default function InputPassword({ label, error, ...props }: InputPasswordP
         onClick={() => setIsView((prev) => !prev)}
       >
         {isView ? (
-          <Eye className="absolute right-4 top-12 z-10 cursor-pointer text-gray-500" />
+          <Eye className="absolute right-4 top-10 z-10 cursor-pointer text-gray-500" />
         ) : (
-          <EyeOff className="absolute right-4 top-12 z-10 cursor-pointer text-gray-500" />
+          <EyeOff className="absolute right-4 top-10 z-10 cursor-pointer text-gray-500" />
         )}
       </button>
     </div>
