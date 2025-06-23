@@ -1,32 +1,44 @@
-import { TransactionDto, TransactionInstallmentsDto } from "../dto/transaction";
 import * as transactionRepository from "../repositories/transaction-repository";
-import { CreateInstallmentTransaction, CreateTransaction } from "../types/Transaction";
+import { CreateTransaction } from "../types/Transaction";
+import { CreateTransactionType, UpdateTransactionType } from "../schemas/transaction-schemas";
+import { nanoid } from "nanoid";
+import { findUserByEmail } from "../services/user-service";
+import { CustomError } from "../utils/errors";
 
-export async function createTransaction(transactionDto: TransactionDto) {
-  const transaction: CreateTransaction = {
-    ...transactionDto,
-    date: new Date(),
-  };
+export async function createTransaction(email: string, data: CreateTransactionType) {
   try {
+    const user = await findUserByEmail(email);
+    const transaction: CreateTransaction = {
+      ...data,
+      userId: user._id.toString(),
+      messageId: data.messageId || nanoid(8),
+      date: new Date(data.date),
+    };
     await transactionRepository.create(transaction);
   } catch (error) {
     throw error;
   }
 }
 
-export async function createTransactionInstallments(transactionDto: TransactionInstallmentsDto) {
+export async function createTransactionInstallments(email: string, data: CreateTransactionType) {
   try {
-    const installmentAmount = transactionDto.amount / transactionDto.installmentsCount;
-    const installmentGroupId = Math.random().toString(36).substring(2, 10);
-    const date = new Date();
+    const user = await findUserByEmail(email);
+    const installmentAmount = data.amount / data.installmentsCount!;
+    const installmentGroupId = nanoid();
 
-    for (let i = 1; i <= transactionDto.installmentsCount; i++) {
-      const installment: CreateInstallmentTransaction = {
-        ...transactionDto,
+    for (let i = 1; i <= data.installmentsCount!; i++) {
+      const installmentDate = new Date(data.date);
+      installmentDate.setDate(installmentDate.getDate() + (i - 1) * 30);
+
+      const installment: CreateTransaction = {
+        ...data,
+        description: `${data.description} - ${i}/${data.installmentsCount}`,
+        userId: user._id.toString(),
         amount: installmentAmount,
         installmentsCurrent: i,
         installmentsGroupId: installmentGroupId,
-        date,
+        date: installmentDate,
+        messageId: data.messageId || nanoid(8),
       };
 
       await transactionRepository.create(installment);
@@ -36,13 +48,73 @@ export async function createTransactionInstallments(transactionDto: TransactionI
   }
 }
 
-export async function getAllTransactions(startDate?: Date, endDate?: Date) {
+export async function updateTransaction(email: string, { transactionId, data }: UpdateTransactionType) {
   try {
-    if (startDate && endDate) {
-      return await transactionRepository.getAllByDateRange(startDate, endDate);
+    const user = await findUserByEmail(email);
+    const transaction = await transactionRepository.findById(transactionId);
+    if (!transaction) {
+      throw new CustomError("Transação não encontrada", 404);
+    }
+    if (transaction.userId !== user._id.toString()) {
+      throw new CustomError("Você não tem permissão para realizar essa ação", 403);
     }
 
-    const transactions = await transactionRepository.getAll();
+    await transactionRepository.update(transactionId, { ...data, date: new Date(data.date) });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteTransaction(email: string, transactionId: string) {
+  try {
+    const user = await findUserByEmail(email);
+    const transaction = await transactionRepository.findById(transactionId);
+    if (!transaction) {
+      throw new CustomError("Transação não encontrada", 404);
+    }
+    if (transaction.userId !== user._id.toString()) {
+      throw new CustomError("Você não tem permissão para realizar essa ação", 403);
+    }
+
+    // Check if the transaction is an installment, then delete all installments
+    if (transaction.installmentsGroupId) {
+      await transactionRepository.removeMany(transaction.installmentsGroupId);
+    }
+
+    await transactionRepository.remove(transactionId);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getAllTransactions(email: string, startDate?: Date, endDate?: Date) {
+  try {
+    const user = await findUserByEmail(email);
+    if (startDate && endDate) {
+      const data = await transactionRepository.getAllByDateRange(startDate, endDate, user._id.toString());
+
+      const transactions = data.map((transaction) => {
+        const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
+        return {
+          ...rest,
+          category: categoryId ? categoryId.name : "",
+          paymentMethod: paymentMethodId ? paymentMethodId.type : "",
+        };
+      });
+
+      return transactions;
+    }
+
+    const data = await transactionRepository.getAll(user._id.toString());
+    const transactions = data.map((transaction) => {
+      const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
+      return {
+        ...rest,
+        category: categoryId ? categoryId.name : "",
+        paymentMethod: paymentMethodId ? paymentMethodId.type : "",
+      };
+    });
+
     return transactions;
   } catch (error) {
     throw error;
