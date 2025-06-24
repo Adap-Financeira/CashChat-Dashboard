@@ -1,16 +1,16 @@
 import Reminders from "../models/Reminders";
 import { CreateReminder, UpdateReminder } from "../types/Reminder";
 
-export async function getAll(userId: string) {
+export async function get(userId: string, limit?: number) {
+  if (limit) {
+    return await Reminders.find({ userId }).limit(limit);
+  }
+
   return await Reminders.find({ userId });
 }
 
-export async function getSome(limit: number, userId: string) {
-  return await Reminders.find({ userId }).limit(limit);
-}
-
-export async function findById(id: string) {
-  return await Reminders.findById(id);
+export async function findById(id: string, userId: string) {
+  return await Reminders.findOne({ _id: id, userId }).lean();
 }
 
 export async function create(data: CreateReminder) {
