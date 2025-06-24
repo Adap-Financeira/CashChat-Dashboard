@@ -1,62 +1,42 @@
 import * as userRepository from "../repositories/user-repository";
 import { CustomError } from "../utils/errors";
 import bcrypt from "bcryptjs";
-import { CreateUserDto } from "../dto/user";
 import { UpdateUser } from "../types/User";
+import { CreateUserType } from "../schemas/user-schema";
 
 export async function findUserByEmail(email: string) {
   try {
-    const userExists = await userRepository.findByEmail(email);
+    const user = await userRepository.findByEmail(email);
 
-    if (!userExists) {
+    if (!user) {
       throw new CustomError("Usuário não encontrado.", 404);
     }
 
-    return userExists;
+    return user;
   } catch (error) {
     throw error;
   }
 }
 
-export async function createUser(user: CreateUserDto) {
+export async function createUser(data: CreateUserType) {
   try {
-    const userExists = await userRepository.findByEmail(user.email);
-    if (userExists) {
-      throw new CustomError("User already exists", 400);
+    const user = await findUserByEmail(data.email);
+    if (user) {
+      throw new CustomError("Usuário já existe.", 400);
     }
 
-    return await userRepository.create(user);
+    return await userRepository.create(data);
   } catch (error) {
     throw error;
   }
 }
-
-// export async function setFirebaseId(email: string, firebaseId: string) {
-//   try {
-//     const userExists = await userRepository.findByEmail(email);
-//     if (!userExists) {
-//       throw new CustomError("User not found", 400);
-//     }
-
-//     return await userRepository.setFirebaseId(email, firebaseId);
-//   } catch (error) {
-//     throw error;
-//   }
-// }
 
 export async function update(email: string, data: UpdateUser) {
   try {
-    const userExists = await userRepository.findByEmail(email);
-    if (!userExists) {
-      throw new CustomError("User not found", 404);
-    }
-
-    const updatedUserData = {
-      ...userExists.toObject(),
-      ...data,
-    };
-
-    return await userRepository.update(updatedUserData, userExists._id.toString());
+    // Check if the user exists
+   await findUserByEmail(email);
+    
+    return await userRepository.update(email, data);
   } catch (error) {
     throw error;
   }
@@ -64,16 +44,12 @@ export async function update(email: string, data: UpdateUser) {
 
 export async function updatePassword(email: string, password: string) {
   try {
-    const userExists = await userRepository.findByEmail(email);
-    if (!userExists) {
-      throw new CustomError("User not found", 404);
-    }
+    // Check if the user exists
+    await findUserByEmail(email);
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    userExists.password = encryptedPassword;
-
-    return await userRepository.update(userExists, userExists._id.toString());
+    return await userRepository.update(email, { password: encryptedPassword });
   } catch (error) {
     throw error;
   }

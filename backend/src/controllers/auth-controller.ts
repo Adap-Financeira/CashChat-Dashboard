@@ -1,8 +1,7 @@
 import { Request, Response, Express, Router } from "express";
 import { CustomError } from "../utils/errors";
-import { findByEmail } from "../repositories/user-repository";
 import authValidator from "../middleware/auth-validator";
-import { update } from "../services/user-service";
+import { findUserByEmail, update } from "../services/user-service";
 import { findPermissionByUserIdAndProductId } from "../services/permission-services";
 import validateRequestBody from "../middleware/request-body-validator";
 import { EmailSchema } from "../schemas/auth-schemas";
@@ -15,7 +14,7 @@ export function authController(server: Express) {
     try {
       const email = req.body.email;
 
-      const user = await findByEmail(email);
+      const user = await findUserByEmail(email);
 
       // Check if the user exists in mongodb
       if (!user) {
@@ -44,7 +43,7 @@ export function authController(server: Express) {
       const email = req.email;
 
       // Check if the user exists in mongodb
-      const user = await findByEmail(email);
+      const user = await findUserByEmail(email);
 
       // Check if user is not null
       if (!user) {
@@ -83,12 +82,7 @@ export function authController(server: Express) {
       try {
         const email = req.body.email;
 
-        const user = await findByEmail(email);
-
-        // Check if the user exists in mongodb
-        if (!user) {
-          throw new CustomError("Usuário não encontrado.", 404);
-        }
+        const user = await findUserByEmail(email);
 
         // Check if user already has a firebase id
         if (!user.firebaseId) {
@@ -97,7 +91,6 @@ export function authController(server: Express) {
 
         // Check if permissions are valid
         const userPermission = await findPermissionByUserIdAndProductId(user._id.toString(), "dashboard");
-        console.log(userPermission);
 
         if (!userPermission?.access) {
           throw new CustomError("Este email não tem permissão para acessar o dashboard.", 401);
