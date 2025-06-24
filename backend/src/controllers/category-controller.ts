@@ -15,19 +15,12 @@ import {
 } from "../schemas/categories-schema";
 import validatePermission from "../middleware/check-permission";
 
-// TODO:
-// - Implement category controller [x]
-// - Implement category service [x]
-// - Implement category repository [x]
-// - Implement category model [x]
-// - Implement create, update, delete and get category endpoints [x]
-// - Check if user has permission to create categories [x]
-
 // Category controller
 export function categoryController(server: Express) {
   const categoryRouter = Router();
   categoryRouter.use(authValidator);
 
+  // Get user categories
   categoryRouter.get("/all", async (req: Request, res: Response) => {
     try {
       const categories = await getAllCategories(req.email);
@@ -43,13 +36,14 @@ export function categoryController(server: Express) {
     }
   });
 
+  // Create category
   categoryRouter.post(
     "/create",
     validateRequestBody(createCategorySchema),
     validatePermission("categories"),
     async (req: Request, res: Response) => {
       try {
-        await createCategoryWithEmail(req.body, req.email);
+        await createCategoryWithEmail(req.email, req.body);
 
         res.status(200).json({ message: "Categoria criada com sucesso." });
       } catch (error) {
@@ -63,13 +57,14 @@ export function categoryController(server: Express) {
     }
   );
 
+  // Update category
   categoryRouter.put(
     "/update",
     validateRequestBody(updateCategorySchema),
     validatePermission("categories"),
     async (req: Request, res: Response) => {
       try {
-        await updateCategory(req.body);
+        await updateCategory(req.email, req.body);
 
         res.status(200).json({ message: "Categoria atualizada com sucesso." });
       } catch (error) {
@@ -83,6 +78,7 @@ export function categoryController(server: Express) {
     }
   );
 
+  // Delete category
   categoryRouter.delete(
     "/delete",
     validateRequestBody(removeCategorySchema),
@@ -91,7 +87,7 @@ export function categoryController(server: Express) {
       try {
         const categoryId: string = req.body.categoryId;
 
-        await removeCategory({ categoryId });
+        await removeCategory(req.email, { categoryId });
 
         res.status(200).json({ message: "Categoria removida com sucesso." });
       } catch (error) {
@@ -104,6 +100,23 @@ export function categoryController(server: Express) {
       }
     }
   );
+
+  // Check user permission to make crud operations on categories
+  // This is used to hide the button to create categories if the user doesn't have permission
+  categoryRouter.get("/permission", validatePermission("categories"), async (req: Request, res: Response) => {
+    try {
+      const permission = true;
+
+      res.status(200).json(permission);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        res.status(error.statusCode).json({ error: error.message });
+        return;
+      }
+
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 
   server.use("/api/categories", categoryRouter);
 }

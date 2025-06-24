@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { checkUserPermission } from "../services/permission-services";
 import { CustomError } from "../utils/errors";
 
-export default function validatePermission(productId: string) {
+export default function validatePermission(productId: "dashboard" | "categories" | "reminders") {
   return async function requestBodyValidator(request: Request, response: Response, next: NextFunction) {
     try {
       // Check if user has permission

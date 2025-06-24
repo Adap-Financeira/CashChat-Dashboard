@@ -5,11 +5,11 @@ export async function getAll(userId: string) {
   return await Category.find({ userId });
 }
 
-export async function getByName(name: string) {
-  return await Category.findOne({ name });
+export async function getByName(name: string, userId: string) {
+  return await Category.findOne({ name, userId });
 }
 
-export async function getById(categoryId: string) {
+export async function getById(categoryId: string, userId: string) {
   return await Category.findById(categoryId);
 }
 

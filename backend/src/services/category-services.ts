@@ -1,69 +1,81 @@
 import * as categoryRepository from "../repositories/category-repository";
-import * as userRepository from "../repositories/user-repository";
 import * as colorsRepository from "../repositories/colors-repository";
-import { CreateCategoryDto, UpdateCategoryDto, RemoveCategoryDto } from "../dto/category";
 import { CustomError } from "../utils/errors";
+import { findUserByEmail } from "./user-service";
+import { CreateCategoryType, RemoveCategoryType, UpdateCategoryType } from "../schemas/categories-schema";
 
 export async function getAllCategories(email: string) {
-  const user = await userRepository.findByEmail(email);
-
-  if (!user) {
-    throw new CustomError("Usuário não encontrado.", 404);
-  }
+  const user = await findUserByEmail(email);
 
   return categoryRepository.getAll(user._id.toString());
 }
 
-export async function createCategoryWithEmail(categoryDto: CreateCategoryDto, email: string) {
-  const user = await userRepository.findByEmail(email);
-
-  if (!user) {
-    throw new CustomError("Usuário não encontrado.", 404);
-  }
+export async function createCategoryWithEmail(email: string, data: CreateCategoryType) {
+  const user = await findUserByEmail(email);
 
   // Check if category already exists
-  const categoryExists = await categoryRepository.getByName(categoryDto.name.toLowerCase());
+  const categoryExists = await categoryRepository.getByName(data.name.toLowerCase(), user._id.toString());
 
   if (categoryExists) {
     throw new CustomError("Essa categoria já existe.", 400);
   }
 
   // Check if colors exists
-  const colorsExists = await colorsRepository.getByValue(categoryDto.color);
+  const colorsExists = await colorsRepository.getByValue(data.color);
 
   if (!colorsExists) {
     throw new CustomError("Essa cor não foi encontrada ou não esta disponivel no momento.", 404);
   }
 
   return categoryRepository.create({
-    ...categoryDto,
-    name: categoryDto.name.toLowerCase(),
+    ...data,
+    name: data.name.toLowerCase(),
     userId: user._id.toString(),
   });
 }
 
-export async function updateCategory(categoryDto: UpdateCategoryDto) {
-  console.log(categoryDto);
-  // Check if category already exists
-  const categoryExists = categoryDto.name
-    ? await categoryRepository.getByName(categoryDto.name.toLowerCase())
-    : null;
+export async function updateCategory(email: string, data: UpdateCategoryType) {
+  // get the user
+  const user = await findUserByEmail(email);
 
-  console.log(categoryExists);
+  // Check if category exists by id
+  const categoryExists = await categoryRepository.getById(data.categoryId, user._id.toString());
 
-  if (categoryExists && categoryDto.categoryId !== categoryExists._id.toString()) {
-    throw new CustomError("Essa categoria já existe.", 400);
+  if (!categoryExists) {
+    throw new CustomError("Categoria não encontrada.", 404);
+  }
+
+  // Check if other category has its name
+  if (data.name) {
+    const categoryExistsByName = await categoryRepository.getByName(
+      data.name.toLowerCase(),
+      user._id.toString()
+    );
+
+    if (categoryExistsByName && data.categoryId !== categoryExistsByName._id.toString()) {
+      throw new CustomError("Essa categoria já existe.", 400);
+    }
   }
 
   // Check if colors exists
-  const colorsExists = categoryDto.color ? await colorsRepository.getByValue(categoryDto.color) : null;
+  const colorsExists = data.color ? await colorsRepository.getByValue(data.color) : null;
 
   if (!colorsExists) {
     throw new CustomError("Essa cor não foi encontrada ou não esta disponivel no momento.", 404);
   }
-  return categoryRepository.update(categoryDto.categoryId, categoryDto);
+
+  return categoryRepository.update(data.categoryId, data);
 }
 
-export async function removeCategory(categoryDto: RemoveCategoryDto) {
-  return categoryRepository.remove(categoryDto.categoryId);
+export async function removeCategory(email: string, data: RemoveCategoryType) {
+  const user = await findUserByEmail(email);
+
+  // Check if category exists by id
+  const categoryExists = await categoryRepository.getById(data.categoryId, user._id.toString());
+
+  if (!categoryExists) {
+    throw new CustomError("Categoria não encontrada.", 404);
+  }
+
+  return categoryRepository.remove(data.categoryId);
 }
