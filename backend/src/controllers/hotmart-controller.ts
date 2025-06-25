@@ -2,9 +2,8 @@ import { Request, Response, Express, Router } from "express";
 import { CustomError } from "../utils/errors";
 import * as userRepository from "../repositories/user-repository";
 import Transaction from "../models/TransactionHotmart";
-import { CreateUserDto } from "../dto/user";
 import * as permissionRepository from "../repositories/permission-repository";
-import mongoose from "mongoose";
+import { CreateUser } from "../types/User";
 
 /**
  * Process permissions for a user based on transaction status
@@ -113,7 +112,7 @@ async function findOrCreateUser(email: string, name?: string, phoneNumber?: stri
     const webhookPlaceholderPassword = "WEBHOOK_CREATED_USER_NO_PASSWORD";
     console.log(`[findOrCreateUser] Using placeholder password for webhook-created user`);
 
-    const newUser: CreateUserDto = {
+    const newUser: CreateUser = {
       email,
       name: name || email.split("@")[0], // Use part of email as name if not provided
       phoneNumber: phoneNumber || "",

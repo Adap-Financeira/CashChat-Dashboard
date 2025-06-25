@@ -4,6 +4,7 @@ import { CreateTransactionType, UpdateTransactionType } from "../schemas/transac
 import { nanoid } from "nanoid";
 import { findUserByEmail } from "../services/user-service";
 import { CustomError } from "../utils/errors";
+import mongoose from "mongoose";
 
 export async function createTransaction(email: string, data: CreateTransactionType) {
   try {
@@ -66,6 +67,8 @@ export async function updateTransaction(email: string, { transactionId, data }: 
 }
 
 export async function deleteTransaction(email: string, transactionId: string) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
     const user = await findUserByEmail(email);
     const transaction = await transactionRepository.findById(transactionId);
@@ -78,10 +81,40 @@ export async function deleteTransaction(email: string, transactionId: string) {
 
     // Check if the transaction is an installment, then delete all installments
     if (transaction.installmentsGroupId) {
-      await transactionRepository.removeMany(transaction.installmentsGroupId);
+      await deleteManyTransactionsByInstallmentGroupId(transaction.installmentsGroupId, session);
+      await session.commitTransaction();
+      session.endSession();
+      return { success: true };
     }
 
-    await transactionRepository.remove(transactionId);
+    await transactionRepository.removeOneWithSession(transactionId, session);
+
+    await session.commitTransaction();
+    session.endSession();
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+}
+
+export async function deleteManyTransactionsByCategory(categoryId: string, session: mongoose.ClientSession) {
+  try {
+    console.log("Deletando transações com a categoryId: ", categoryId);
+
+    return await transactionRepository.removeManyByCategoryId(categoryId, session);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function deleteManyTransactionsByInstallmentGroupId(
+  installmentGroupId: string,
+  session: mongoose.ClientSession
+) {
+  try {
+    return await transactionRepository.removeManyByInstallmentGroupId(installmentGroupId, session);
   } catch (error) {
     throw error;
   }

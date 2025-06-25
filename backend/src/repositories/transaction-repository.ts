@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Transaction from "../models/Transaction";
 import { CreateTransaction, ITransaction, UpdateTransaction } from "../types/Transaction";
 
@@ -10,11 +11,19 @@ export async function update(transactionId: string, transaction: UpdateTransacti
 }
 
 export async function remove(transactionId: string) {
-  await Transaction.deleteOne({ _id: transactionId });
+  return await Transaction.deleteOne({ _id: transactionId });
 }
 
-export async function removeMany(transactionGroupId: string) {
-  await Transaction.deleteMany({ installmentsGroupId: transactionGroupId });
+export async function removeOneWithSession(transactionId: string, session: mongoose.ClientSession) {
+  return await Transaction.deleteOne({ _id: transactionId }).session(session);
+}
+
+export async function removeManyByInstallmentGroupId(transactionGroupId: string, session: mongoose.ClientSession) {
+  return await Transaction.deleteMany({ installmentsGroupId: transactionGroupId }).session(session);
+}
+
+export async function removeManyByCategoryId(categoryId: string, session: mongoose.ClientSession) {
+  return await Transaction.deleteMany({ categoryId }).session(session);
 }
 
 export async function findById(transactionId: string) {

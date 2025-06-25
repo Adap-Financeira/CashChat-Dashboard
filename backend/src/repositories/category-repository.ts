@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/Category";
 import { CreateCategory, UpdateCategory } from "../types/Category";
 
@@ -10,7 +11,7 @@ export async function getByName(name: string, userId: string) {
 }
 
 export async function getById(categoryId: string, userId: string) {
-  return await Category.findById(categoryId);
+  return await Category.findOne({ _id: categoryId, userId });
 }
 
 export async function create(category: CreateCategory) {
@@ -24,4 +25,9 @@ export async function update(categoryId: string, category: UpdateCategory) {
 export async function remove(categoryId: string) {
   console.log(categoryId);
   return await Category.deleteOne({ _id: categoryId });
+}
+
+export async function removeOneWithSession(categoryId: string, session: mongoose.ClientSession) {
+  console.log(categoryId);
+  return await Category.deleteOne({ _id: categoryId }).session(session);
 }

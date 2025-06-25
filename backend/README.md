@@ -15,6 +15,6 @@ User
 
 Adicionar um check box para verificar se o usuario quer excluir todas as transações vinculadas a uma categoria quando for excluida a categoria.
 
-Alterar texto de data para data da fatura quando o metodo de pagamento for credito
+[x] Alterar texto de data para data da fatura quando o metodo de pagamento for credito
 
 Adicionar opção de marcar como pago
