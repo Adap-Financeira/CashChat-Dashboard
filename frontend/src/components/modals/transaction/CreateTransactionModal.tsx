@@ -30,42 +30,27 @@ import {
   PaymentMethod,
   paymentMethods as paymentMethodsList,
 } from "@/utils/payments";
+import { Transaction } from "@/types/transaction";
 
 interface CreateTransactionModalProps {
   children: React.ReactNode;
-  data?: {
-    category: string;
-    paymentMethod: string;
-    _id: string;
-    userId: string;
-    amount: number;
-    description: string;
-    date: Date;
-    messageId: string;
-    type: "income" | "expense";
-    status: "pending" | "completed";
-    installmentsCount: number;
-    installmentsCurrent: number;
-    installmentsGroupId: string;
-  };
 }
 
 // Modal for create transactions
-export default function CreateTransactionModal({ children, data }: CreateTransactionModalProps) {
+export default function CreateTransactionModal({ children }: CreateTransactionModalProps) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof createTransactionFormSchema>>({
     resolver: zodResolver(createTransactionFormSchema),
     defaultValues: {
-      description: data?.description || "",
-      category: data?.category || "",
-      paymentMethod: data?.paymentMethod || "",
-      status: data?.status || "concluído",
-      amount: String(data?.amount ?? "0"),
-      date: data?.date || new Date(),
-      type: data?.type || "",
-      installments: String(data?.installmentsCount),
+      description: "",
+      category: "",
+      paymentMethod: "",
+      status: "concluído",
+      amount: String("0"),
+      date: new Date(),
+      type: "",
     },
   });
 

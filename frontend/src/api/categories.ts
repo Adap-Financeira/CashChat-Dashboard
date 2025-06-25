@@ -91,3 +91,28 @@ export async function updateCategory(
     throw error;
   }
 }
+
+export async function deleteCategory(categoryId: string): Promise<{ message: string } | CustomError> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `token=${await getCookie("token")};`,
+      },
+      body: JSON.stringify({ categoryId }),
+      cache: "no-store",
+      credentials: "include",
+    });
+    revalidateTag("categories");
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new CustomError(data.error, response.status);
+    }
+
+    return data;
+  } catch (error: any) {
+    throw error;
+  }
+}

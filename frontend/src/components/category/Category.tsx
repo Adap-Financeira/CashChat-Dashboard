@@ -2,8 +2,6 @@ import { Edit, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import CategoryModal from "../modals/category/CategoryModal";
 import DeleteCategoryModal from "../modals/category/DeleteCategoryModal";
-import { toast } from "sonner";
-import { getCookie } from "@/app/actions";
 
 interface CategoryProps {
   id: string;
@@ -16,25 +14,6 @@ interface CategoryProps {
 }
 
 export default function Category({ id, name, color, colors }: CategoryProps) {
-  async function handleDelete() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/delete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
-      },
-      body: JSON.stringify({ categoryId: id }),
-      cache: "no-store",
-      credentials: "include",
-    });
-    const responseData = await response.json();
-    if (!response.ok) {
-      toast.error(responseData.error);
-      return;
-    }
-    toast.success(responseData.message);
-  }
-
   return (
     <div className="flex items-center justify-between pr-3 gap-2 bg-gray-100 dark:bg-gray-800 h-[52px] rounded-md relative">
       <span
@@ -50,7 +29,7 @@ export default function Category({ id, name, color, colors }: CategoryProps) {
             </div>
           </Button>
         </CategoryModal>
-        <DeleteCategoryModal handleDelete={handleDelete}>
+        <DeleteCategoryModal id={id}>
           <Button variant="ghost" className="p-2 cursor-pointer hover:text-destructive">
             <div className="flex justify-center items-center w-6 h-6">
               <Trash width={20} height={20} />

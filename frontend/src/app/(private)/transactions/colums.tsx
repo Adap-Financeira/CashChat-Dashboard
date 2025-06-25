@@ -29,6 +29,10 @@ export const columns: ColumnDef<Transaction>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const category = row.getValue("category") as string;
+      return <div>{category || "n/a"}</div>;
+    },
   },
   {
     accessorKey: "paymentMethod",

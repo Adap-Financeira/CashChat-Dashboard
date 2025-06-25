@@ -23,9 +23,8 @@ interface DeleteTransactionModalProps {
 export default function DeleteTransactionModal({ id, open, onOpenChange }: DeleteTransactionModalProps) {
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit() {
     try {
-      e.preventDefault();
       setLoading(true);
       await deleteTransaction({ id });
       toast.success("Transação excluída com sucesso.");
@@ -44,8 +43,8 @@ export default function DeleteTransactionModal({ id, open, onOpenChange }: Delet
           <DialogHeader>
             <DialogTitle>Tem certeza que deseja excluir esta transação?</DialogTitle>
             <DialogDescription>
-              ATENÇÃO: Esta ação não pode ser desfeita. <br /> Se esta transação for do tipo crédito com parcelas,
-              todas as transações desta mesma compra serão excluídas.
+              ATENÇÃO: Esta ação não pode ser desfeita. <br /> Se esta transação for do tipo crédito com
+              parcelas, todas as transações desta mesma compra serão excluídas.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="mt-5">
