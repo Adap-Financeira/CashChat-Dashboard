@@ -1,9 +1,17 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { DatePickerWithRange } from "../date-picker-range/DatePickerRange";
+import { DatePickerWithRange } from "../date-pickers/DatePickerRange";
 import { Button } from "../ui/button";
-import { getToday, getCurrentWeek, getCurrentMonth, isToday, isWeek, isMonth } from "@/utils/date";
+import {
+  getCurrentWeek,
+  getCurrentMonth,
+  isToday,
+  isWeek,
+  isMonth,
+  getStartOfToday,
+  getEndOfToday,
+} from "@/utils/date";
 
 interface DateFilterProps {
   from: Date;
@@ -19,7 +27,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isToday(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getToday() + "&to=" + getToday());
+          redirect("?from=" + getStartOfToday() + "&to=" + getEndOfToday());
         }}
       >
         Hoje
@@ -27,7 +35,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isWeek(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getCurrentWeek().startDate + "&to=" + getCurrentWeek().endDate);
+          redirect("?from=" + getCurrentWeek().startDate + "&to=" + getCurrentWeek().endDate);
         }}
       >
         Semana
@@ -35,7 +43,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isMonth(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("/dashboard?from=" + getCurrentMonth().startDate + "&to=" + getCurrentMonth().endDate);
+          redirect("?from=" + getCurrentMonth().startDate + "&to=" + getCurrentMonth().endDate);
         }}
       >
         Mês

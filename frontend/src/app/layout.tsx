@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthProvider";
+import TanstackQueryProvider from "@/context/TanstackQueryProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,14 +29,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Toaster />
-          <div className="flex flex-col min-h-screen w-full max-w-[1600px] mx-auto">{children}</div>
-        </ThemeProvider>
+        <TanstackQueryProvider>
+          <AuthProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <Toaster />
+              <div className="flex flex-col min-h-screen w-full max-w-[1600px] mx-auto">{children}</div>
+            </ThemeProvider>
+          </AuthProvider>
+        </TanstackQueryProvider>
       </body>
     </html>
   );
 }
 
-// Add nav buttons to header drawer
 // use rosen charts or rechart to create charts

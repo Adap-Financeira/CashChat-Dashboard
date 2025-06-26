@@ -3,10 +3,15 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import "./models/PaymentMethods"; // Import the PaymentMethods model to register it with Mongoose
 import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
 import { hotmartController } from "./controllers/hotmart-controller";
 import { transactionController } from "./controllers/transaction-controller";
+import { colorsController } from "./controllers/colors-controller";
+import { categoryController } from "./controllers/category-controller";
+import { remindersController } from "./controllers/reminders-controller";
+import { paymentMethodController } from "./controllers/payment-method-controller";
 
 dotenv.config();
 const app = express();
@@ -23,6 +28,10 @@ app.use(cookieParser());
 authController(app);
 statsController(app);
 transactionController(app);
+colorsController(app);
+categoryController(app);
+remindersController(app);
+paymentMethodController(app);
 
 const dbName = process.env.NODE_ENV === "prod" ? "prod" : "test";
 hotmartController(app);
@@ -34,5 +43,3 @@ mongoose
 
 const PORT = 5001;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
-
-// Add auth middleware to protected routes

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod";
 
 export default function validateRequestBody(schema: ZodSchema) {
   return function requestBodyValidator(request: Request, response: Response, next: NextFunction) {
@@ -8,7 +8,10 @@ export default function validateRequestBody(schema: ZodSchema) {
 
       next();
     } catch (error: any) {
-      response.status(400).send("Informe os campos obrigatórios corretamente.");
+      if (error instanceof ZodError) {
+        console.log(error.flatten().fieldErrors);
+      }
+      response.status(400).json({ error: "Informe os campos obrigatórios corretamente." });
     }
   };
 }

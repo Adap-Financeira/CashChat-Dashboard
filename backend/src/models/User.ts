@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    firebaseId: {
+      type: String,
+    },
     name: {
       type: String,
       required: true,
@@ -21,7 +24,6 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true, // cria automaticamente createdAt e updatedAt
     _id: true,
-    
   }
 );
 

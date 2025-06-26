@@ -59,6 +59,18 @@ export function getToday(): string {
   return formatDate(today);
 }
 
+export function getStartOfToday(): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return formatDate(today);
+}
+
+export function getEndOfToday(): string {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  return formatDate(today);
+}
+
 export function getCurrentWeek(): { startDate: string; endDate: string } {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 (Sun) to 6 (Sat)
@@ -126,4 +138,11 @@ export function isMonth(startDate: Date, endDate: Date) {
     startDate?.toDateString() === getStartOfMonth(new Date()).toDateString() &&
     endDate?.toDateString() === getEndOfMonth(new Date()).toDateString()
   );
+}
+
+export function getTomorrow(): Date {
+  const now = new Date();
+  const tomorrow = new Date(now); // clone the date
+  tomorrow.setDate(now.getDate() + 1); // add 1 day
+  return tomorrow;
 }
