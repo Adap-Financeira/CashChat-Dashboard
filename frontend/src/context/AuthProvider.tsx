@@ -47,21 +47,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       if (firebaseUser) {
         try {
-          const isNewUser = firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime;
-          if (isNewUser) {
-            setLoading(false);
-            return; // Skip the rest of the logic
-          }
-
-          setUser(firebaseUser);
-
+          // const isNewUser = firebaseUser.metadata.creationTime === firebaseUser.metadata.lastSignInTime;
+          // if (isNewUser) {
+          //   setLoading(false);
+          //   return; // Skip the rest of the logic
+          // }
           const token = await firebaseUser.getIdToken();
+          setUser(firebaseUser);
           await setCookie(token, ID_TOKEN_COOKIE);
           console.log("ID Token cookie set/updated.");
         } catch (error) {
           console.error("Error getting ID token:", error);
-          setUser(null);
-          removeCookie(ID_TOKEN_COOKIE);
         }
       } else {
         setUser(null);
@@ -76,7 +72,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   async function createUser(email: string, password: string) {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
+    await signOut(auth);
+    return userCredentials;
   }
 
   async function login(email: string, password: string) {

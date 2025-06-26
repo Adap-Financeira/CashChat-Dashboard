@@ -25,12 +25,7 @@ import FormCurrencyInput from "@/components/form-components/FormCurrencyInput";
 import FormDateInput from "@/components/form-components/FormDateInput";
 import { createTransactionFormSchema } from "@/schemas/schemas";
 import { createTransaction } from "@/api/transactions";
-import {
-  getPaymentMethodKeyByLabel,
-  PaymentMethod,
-  paymentMethods as paymentMethodsList,
-} from "@/utils/payments";
-import { Transaction } from "@/types/transaction";
+import { installmentList, PaymentMethod, paymentMethods as paymentMethodsList } from "@/utils/payments";
 
 interface CreateTransactionModalProps {
   children: React.ReactNode;
@@ -40,17 +35,18 @@ interface CreateTransactionModalProps {
 export default function CreateTransactionModal({ children }: CreateTransactionModalProps) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [currentSelectField, setCurrentSelectField] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof createTransactionFormSchema>>({
     resolver: zodResolver(createTransactionFormSchema),
     defaultValues: {
       description: "",
-      category: "",
-      paymentMethod: "",
-      status: "concluído",
+      categoryId: "",
+      paymentMethodId: "",
+      status: "completed",
       amount: String("0"),
       date: new Date(),
-      type: "",
+      type: "expense",
     },
   });
 
@@ -64,27 +60,22 @@ export default function CreateTransactionModal({ children }: CreateTransactionMo
     queryFn: getPaymentMethods,
   });
 
+  // Used to check if the payment method selected in the input is credit to show hidden input for installments
+  const CREDIT_CARD_ID = paymentMethods?.find((paymentMethod) => paymentMethod.type === "credit")?._id;
+
   async function handleSubmit(data: z.infer<typeof createTransactionFormSchema>) {
     try {
       setLoading(true);
 
-      //Get the id of category name selected
-      const categoryId = categories?.find((category) => category.name === data.category)?._id;
-
-      // Get the id of payment method name selected
-      const paymentMethodId = paymentMethods?.find(
-        (paymentMethod) => paymentMethod.type === getPaymentMethodKeyByLabel(data.paymentMethod.toLowerCase())
-      )?._id;
-
       const response = await createTransaction({
         description: data.description,
-        status: data.status === "concluído" ? "completed" : "pending",
+        status: data.status,
         amount: Number(data.amount) / 100, // Convert to real R$ from cents
         date: data.date,
-        type: data.type === "receita" ? "income" : "expense",
-        categoryId: categoryId!,
-        paymentMethodId: paymentMethodId!,
-        installmentsCount: Number(data.installments),
+        type: data.type,
+        categoryId: data.categoryId,
+        paymentMethodId: data.paymentMethodId,
+        installmentsCount: Number(data.installments) || 1,
       });
 
       toast.success(response.message);
@@ -120,22 +111,31 @@ export default function CreateTransactionModal({ children }: CreateTransactionMo
 
               <FormSelectInput
                 control={form.control}
-                name="category"
+                name="categoryId"
                 label="Categoria"
                 placeholder="Selecione uma categoria"
-                options={categories?.map((category) => category.name) || []}
+                options={categories?.map((category) => ({ value: category._id, label: category.name })) || []}
+                isOpen={currentSelectField === "categoryId"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "categoryId" : null);
+                }}
               />
 
               <FormSelectInput
                 control={form.control}
-                name="paymentMethod"
+                name="paymentMethodId"
                 label="Forma de pagamento"
                 placeholder="Selecione uma forma de pagamento"
                 options={
-                  paymentMethods?.map(
-                    (paymentMethod) => paymentMethodsList[paymentMethod.type as PaymentMethod]
-                  ) || []
+                  paymentMethods?.map((paymentMethod) => ({
+                    value: paymentMethod._id,
+                    label: paymentMethodsList[paymentMethod.type as PaymentMethod],
+                  })) || []
                 }
+                isOpen={currentSelectField === "paymentMethodId"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "paymentMethodId" : null);
+                }}
               />
 
               <FormSelectInput
@@ -143,7 +143,14 @@ export default function CreateTransactionModal({ children }: CreateTransactionMo
                 name="status"
                 label="Status"
                 placeholder="Selecione um status"
-                options={["pendente", "concluído"]}
+                options={[
+                  { value: "pending", label: "Pendente" },
+                  { value: "completed", label: "Concluído" },
+                ]}
+                isOpen={currentSelectField === "status"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "status" : null);
+                }}
               />
 
               <FormSelectInput
@@ -151,7 +158,14 @@ export default function CreateTransactionModal({ children }: CreateTransactionMo
                 name="type"
                 label="Tipo"
                 placeholder="Selecione um tipo"
-                options={["receita", "despesa"]}
+                options={[
+                  { value: "income", label: "Receita" },
+                  { value: "expense", label: "Despesa" },
+                ]}
+                isOpen={currentSelectField === "type"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "type" : null);
+                }}
               />
 
               <FormCurrencyInput
@@ -164,17 +178,21 @@ export default function CreateTransactionModal({ children }: CreateTransactionMo
               <FormDateInput
                 control={form.control}
                 name="date"
-                label={form.watch("paymentMethod") === "Crédito" ? "Data da fatura do cartão" : "Data"}
+                label={form.watch("paymentMethodId") === CREDIT_CARD_ID ? "Data da fatura do cartão" : "Data"}
                 placeholder="Selecione uma data"
               />
 
-              {form.watch("paymentMethod") === "Crédito" && (
+              {form.watch("paymentMethodId") === CREDIT_CARD_ID && (
                 <FormSelectInput
                   control={form.control}
                   name="installments"
                   label="Parcelas"
-                  placeholder="Selecione uma parcela"
-                  options={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+                  placeholder="Parcelas"
+                  options={installmentList}
+                  isOpen={currentSelectField === "installments"}
+                  onOpenChange={(open) => {
+                    setCurrentSelectField(open ? "installments" : null);
+                  }}
                 />
               )}
             </div>

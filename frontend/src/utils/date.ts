@@ -59,6 +59,18 @@ export function getToday(): string {
   return formatDate(today);
 }
 
+export function getStartOfToday(): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return formatDate(today);
+}
+
+export function getEndOfToday(): string {
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  return formatDate(today);
+}
+
 export function getCurrentWeek(): { startDate: string; endDate: string } {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 (Sun) to 6 (Sat)

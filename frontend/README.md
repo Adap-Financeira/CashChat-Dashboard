@@ -1,5 +1,9 @@
 TODO:
 
+- Authentication
+
+* [] Add refresh token logic or change the token expiration time to some days
+
 - Reminders
 
 * [x] Create cache tags for reminders routes
@@ -13,6 +17,7 @@ TODO:
 * [x] Invalidate transactions cache when a transaction is created, updated or deleted
 * [x] Create the create, update and delete transactions modals
 * [x] handle deletion of transaction with installments
+* [ ] Think a way to dont pass null values in installmentsCount and check if the payment method is credit to create installments with the default instalmentCount of 1
 * [ ] Add pagination in transactions
 
 - Categories

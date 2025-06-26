@@ -16,29 +16,41 @@ export const resetPasswordSchema = z.object({
 
 export const createTransactionFormSchema = z.object({
   description: z.string().min(1, "Campo descrição é obrigatório"),
-  category: z.string().min(1, "Campo categoria é obrigatório"),
-  paymentMethod: z.string().min(1, "Campo forma de pagamento é obrigatório"),
-  status: z.string().min(1, "Campo status é obrigatório"),
+  categoryId: z.string().min(1, "Campo categoria é obrigatório"),
+  paymentMethodId: z.string().min(1, "Campo forma de pagamento é obrigatório"),
+  status: z.enum(["pending", "completed"], {
+    required_error: "Campo status é obrigatório",
+    invalid_type_error: "Campo status é obrigatório",
+  }),
   amount: z.string().min(1, "Campo valor é obrigatório"),
   date: z.date({
     required_error: "Campo data é obrigatório",
     invalid_type_error: "Formato de data inválido",
   }),
-  type: z.string().min(1, "Campo tipo é obrigatório"),
+  type: z.enum(["income", "expense"], {
+    required_error: "Campo tipo é obrigatório",
+    invalid_type_error: "Campo tipo é obrigatório",
+  }),
   installments: z.string().optional(),
 });
 export type CreateTransactionFormType = z.infer<typeof createTransactionFormSchema>;
 
 export const updateTransactionFormSchema = z.object({
   description: z.string().min(1, "Campo descrição é obrigatório"),
-  category: z.string().min(1, "Campo categoria é obrigatório"),
-  status: z.string().min(1, "Campo status é obrigatório"),
+  categoryId: z.string().min(1, "Campo categoria é obrigatório"),
+  status: z.enum(["pending", "completed"], {
+    required_error: "Campo status é obrigatório",
+    invalid_type_error: "Campo status é obrigatório",
+  }),
   amount: z.string().min(1, "Campo valor é obrigatório"),
   date: z.date({
     required_error: "Campo data é obrigatório",
     invalid_type_error: "Formato de data inválido",
   }),
-  type: z.string().min(1, "Campo tipo é obrigatório"),
+  type: z.enum(["income", "expense"], {
+    required_error: "Campo tipo é obrigatório",
+    invalid_type_error: "Campo tipo é obrigatório",
+  }),
 });
 export type UpdateTransactionFormType = z.infer<typeof updateTransactionFormSchema>;
 

@@ -3,7 +3,15 @@
 import { redirect } from "next/navigation";
 import { DatePickerWithRange } from "../date-pickers/DatePickerRange";
 import { Button } from "../ui/button";
-import { getToday, getCurrentWeek, getCurrentMonth, isToday, isWeek, isMonth } from "@/utils/date";
+import {
+  getCurrentWeek,
+  getCurrentMonth,
+  isToday,
+  isWeek,
+  isMonth,
+  getStartOfToday,
+  getEndOfToday,
+} from "@/utils/date";
 
 interface DateFilterProps {
   from: Date;
@@ -19,7 +27,7 @@ export default function DateFilter({ from, to }: DateFilterProps) {
       <Button
         variant={isToday(startDate, endDate) ? "default" : "outline"}
         onClick={() => {
-          redirect("?from=" + getToday() + "&to=" + getToday());
+          redirect("?from=" + getStartOfToday() + "&to=" + getEndOfToday());
         }}
       >
         Hoje

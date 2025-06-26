@@ -8,7 +8,12 @@ interface FormSelectInputProps {
   label: string;
   placeholder?: string;
   disabled?: boolean;
-  options: string[];
+  options: {
+    value: string;
+    label: string;
+  }[];
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function FormSelectInput({
@@ -18,6 +23,8 @@ export default function FormSelectInput({
   placeholder,
   options,
   disabled,
+  isOpen,
+  onOpenChange,
 }: FormSelectInputProps) {
   return (
     <FormField
@@ -26,16 +33,22 @@ export default function FormSelectInput({
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
-          <Select onValueChange={field.onChange} defaultValue={field.value} disabled={disabled}>
+          <Select
+            open={isOpen}
+            onOpenChange={(open) => onOpenChange?.(open)}
+            onValueChange={field.onChange}
+            defaultValue={field.value}
+            disabled={disabled}
+          >
             <FormControl>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />
               </SelectTrigger>
             </FormControl>
-            <SelectContent>
+            <SelectContent className="max-h-[200px] overflow-y-auto z-[999]">
               {options.map((option) => (
-                <SelectItem key={option} value={option} className="capitalize">
-                  {option}
+                <SelectItem key={option.value} value={option.value} className="capitalize">
+                  {option.label}
                 </SelectItem>
               ))}
             </SelectContent>

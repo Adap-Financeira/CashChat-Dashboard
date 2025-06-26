@@ -49,8 +49,6 @@ export default function ReminderModal({ children, data }: ReminderModalProps) {
   const isEdition = !!data;
 
   async function handleSubmit(e: React.FormEvent) {
-    console.log("here");
-
     try {
       e.preventDefault();
       setLoading(true);

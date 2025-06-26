@@ -8,7 +8,7 @@ const createTransactionSchema = z.object({
   type: z.enum(["income", "expense"]),
   amount: z.number(),
   date: z.date(),
-  installmentsCount: z.number().optional(),
+  installmentsCount: z.number(),
   messageId: z.string().optional(),
 });
 

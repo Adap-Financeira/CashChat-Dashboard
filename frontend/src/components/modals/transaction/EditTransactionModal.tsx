@@ -22,7 +22,7 @@ import FormSelectInput from "@/components/form-components/FormSelectInput";
 import FormCurrencyInput from "@/components/form-components/FormCurrencyInput";
 import FormDateInput from "@/components/form-components/FormDateInput";
 import { updateTransactionFormSchema, UpdateTransactionFormType } from "@/schemas/schemas";
-import { PaymentMethod, paymentMethods as paymentMethodsList } from "@/utils/payments";
+import { installmentList, PaymentMethod, paymentMethods as paymentMethodsList } from "@/utils/payments";
 import { Transaction } from "@/types/transaction";
 import { updateTransaction } from "@/api/transactions";
 
@@ -35,16 +35,17 @@ interface EditTransactionModalProps {
 // Modal for edit transactions
 export default function EditTransactionModal({ open, onOpenChange, data }: EditTransactionModalProps) {
   const [loading, setLoading] = useState(false);
+  const [currentSelectField, setCurrentSelectField] = useState<string | null>(null);
 
   const form = useForm<UpdateTransactionFormType>({
     resolver: zodResolver(updateTransactionFormSchema),
     defaultValues: {
       description: data.description,
-      category: data.category,
-      status: data.status === "completed" ? "concluído" : "pendente",
+      categoryId: data.category,
+      status: data.status,
       amount: String(data.amount * 100),
       date: new Date(data.date),
-      type: data.type === "income" ? "receita" : "despesa",
+      type: data.type,
     },
   });
 
@@ -61,19 +62,15 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
   async function handleSubmit(formData: UpdateTransactionFormType) {
     try {
       setLoading(true);
-
-      //Get the id of category name selected
-      const categoryId = categories?.find((category) => category.name === formData.category)?._id;
-
       const response = await updateTransaction({
         transactionId: data._id,
         data: {
           description: formData.description,
-          status: formData.status === "concluído" ? "completed" : "pending",
+          status: formData.status,
           amount: Number(formData.amount) / 100, // Convert to real R$ from cents
           date: formData.date.toISOString(),
-          type: formData.type === "receita" ? "income" : "expense",
-          categoryId: categoryId!,
+          type: formData.type,
+          categoryId: formData.categoryId,
         },
       });
 
@@ -108,10 +105,14 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
 
               <FormSelectInput
                 control={form.control}
-                name="category"
+                name="categoryId"
                 label="Categoria"
                 placeholder="Selecione uma categoria"
-                options={categories?.map((category) => category.name) || []}
+                options={categories?.map((category) => ({ value: category._id, label: category.name })) || []}
+                isOpen={currentSelectField === "categoryId"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "categoryId" : null);
+                }}
               />
 
               <FormSelectInput
@@ -121,10 +122,15 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
                 disabled
                 placeholder="Selecione uma forma de pagamento"
                 options={
-                  paymentMethods?.map(
-                    (paymentMethod) => paymentMethodsList[paymentMethod.type as PaymentMethod]
-                  ) || []
+                  paymentMethods?.map((paymentMethod) => ({
+                    value: paymentMethod._id,
+                    label: paymentMethodsList[paymentMethod.type as PaymentMethod],
+                  })) || []
                 }
+                isOpen={currentSelectField === "paymentMethod"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "paymentMethod" : null);
+                }}
               />
 
               <FormSelectInput
@@ -132,7 +138,14 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
                 name="status"
                 label="Status"
                 placeholder="Selecione um status"
-                options={["pendente", "concluído"]}
+                options={[
+                  { value: "pending", label: "Pendente" },
+                  { value: "completed", label: "Concluído" },
+                ]}
+                isOpen={currentSelectField === "status"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "status" : null);
+                }}
               />
 
               <FormSelectInput
@@ -141,7 +154,14 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
                 label="Tipo"
                 disabled={data.paymentMethod === "credit"}
                 placeholder="Selecione um tipo"
-                options={["receita", "despesa"]}
+                options={[
+                  { value: "income", label: "Receita" },
+                  { value: "expense", label: "Despesa" },
+                ]}
+                isOpen={currentSelectField === "type"}
+                onOpenChange={(open) => {
+                  setCurrentSelectField(open ? "type" : null);
+                }}
               />
 
               <FormCurrencyInput
@@ -166,7 +186,11 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
                   label="Parcelas"
                   disabled
                   placeholder="Selecione uma parcela"
-                  options={["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]}
+                  options={installmentList}
+                  isOpen={currentSelectField === "installments"}
+                  onOpenChange={(open) => {
+                    setCurrentSelectField(open ? "installments" : null);
+                  }}
                 />
               )}
             </div>

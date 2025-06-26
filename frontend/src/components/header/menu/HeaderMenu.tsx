@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/context/AuthProvider";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function HeaderMenu() {
   const { theme, setTheme } = useTheme();
@@ -21,12 +22,16 @@ export default function HeaderMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="focus:outline-none">
-        <div className="flex rounded-full p-3 bg-accent cursor-pointer ml-5">
-          <UserRound />
-        </div>
+        <Avatar>
+          <AvatarFallback>ADP</AvatarFallback>
+          <AvatarImage src="https://github.com/shadcn.png" />
+        </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>Guilherme</DropdownMenuLabel>
+      <DropdownMenuContent className="max-w-64">
+        <DropdownMenuLabel className="flex min-w-0 flex-col">
+          <span className="text-foreground truncate text-sm font-medium">Guilherme</span>
+          <span className="text-muted-foreground truncate text-xs font-normal">guilherme@cashchat.com</span>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <UserRound />
@@ -52,6 +57,7 @@ export default function HeaderMenu() {
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()}>
           <LogOut />
           Sair
