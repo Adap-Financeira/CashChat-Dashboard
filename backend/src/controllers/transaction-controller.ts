@@ -16,6 +16,7 @@ import {
   updateTransactionSchema,
 } from "../schemas/transaction-schemas";
 import validateRequestBody from "../middleware/request-body-validator";
+import { getPaymentMethodById } from "../services/payment-methods-service";
 export function transactionController(server: Express) {
   const transactionRouter = Router();
 
@@ -29,12 +30,12 @@ export function transactionController(server: Express) {
       }
 
       // Transform dd/MM/yyyy to MM/dd/yyyy
-      parsedDate.data.from = transformDateToUsLocale(parsedDate.data.from);
-      parsedDate.data.to = transformDateToUsLocale(parsedDate.data.to);
+      const from = transformDateToUsLocale(parsedDate.data.from);
+      const to = transformDateToUsLocale(parsedDate.data.to);
 
       const now = new Date();
-      const startDate = parsedDate.data?.from ? new Date(parsedDate.data.from) : getStartOfMonth(now);
-      const endDate = parsedDate.data?.to ? new Date(parsedDate.data.to) : getEndOfMonth(now);
+      const startDate = from ? new Date(from) : getStartOfMonth(now);
+      const endDate = to ? new Date(to) : getEndOfMonth(now);
 
       const transactions = await getAllTransactions(req.email, startDate, endDate);
 
@@ -58,7 +59,10 @@ export function transactionController(server: Express) {
       try {
         const data = createTransactionSchema.parse(req.body);
 
-        if (data.installmentsCount) {
+        // Get the payment method by id and check if it is a credit
+        const paymentMethod = await getPaymentMethodById(data.paymentMethodId);
+
+        if (paymentMethod.type === "credit") {
           await createTransactionInstallments(req.email, data);
         } else {
           await createTransaction(req.email, data);
@@ -67,6 +71,7 @@ export function transactionController(server: Express) {
         res.status(201).json({ message: "Transação criada com sucesso." });
       } catch (error) {
         console.log(error);
+
         if (error instanceof CustomError) {
           res.status(error.statusCode).json({ error: error.message });
           return;

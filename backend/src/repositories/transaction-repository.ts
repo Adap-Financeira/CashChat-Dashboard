@@ -18,7 +18,10 @@ export async function removeOneWithSession(transactionId: string, session: mongo
   return await Transaction.deleteOne({ _id: transactionId }).session(session);
 }
 
-export async function removeManyByInstallmentGroupId(transactionGroupId: string, session: mongoose.ClientSession) {
+export async function removeManyByInstallmentGroupId(
+  transactionGroupId: string,
+  session: mongoose.ClientSession
+) {
   return await Transaction.deleteMany({ installmentsGroupId: transactionGroupId }).session(session);
 }
 
@@ -37,7 +40,7 @@ export async function getAll(userId: string) {
     .lean<ITransaction[]>();
 }
 
-export async function getAllByDateRange(startDate: Date, endDate: Date, userId: string) {
+export async function getAllByDateRange(userId: string, startDate?: Date, endDate?: Date) {
   return await Transaction.find({
     userId,
     date: {

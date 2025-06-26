@@ -14,3 +14,17 @@ export async function getPaymentMethods() {
     throw error;
   }
 }
+
+export async function getPaymentMethodById(id: string) {
+  try {
+    const paymentMethod = await paymentMethodRepository.getById(id);
+
+    if (!paymentMethod) {
+      throw new CustomError("Método de pagamento não encontrado.", 404);
+    }
+
+    return paymentMethod;
+  } catch (error) {
+    throw error;
+  }
+}

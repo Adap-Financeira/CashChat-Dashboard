@@ -123,24 +123,19 @@ export async function deleteManyTransactionsByInstallmentGroupId(
 export async function getAllTransactions(email: string, startDate?: Date, endDate?: Date) {
   try {
     const user = await findUserByEmail(email);
-    if (startDate && endDate) {
-      const data = await transactionRepository.getAllByDateRange(startDate, endDate, user._id.toString());
 
-      const transactions = data.map((transaction) => {
-        const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
-        return {
-          ...rest,
-          category: categoryId ? categoryId.name : "",
-          paymentMethod: paymentMethodId ? paymentMethodId.type : "",
-        };
-      });
-
-      return transactions;
+    // Check if the both dates are equal
+    if (startDate && endDate && startDate.getTime() === endDate.getTime()) {
+      endDate.setHours(23, 59, 59, 999);
     }
 
-    const data = await transactionRepository.getAll(user._id.toString());
+    const data =
+      startDate || endDate
+        ? await transactionRepository.getAllByDateRange(user._id.toString(), startDate, endDate)
+        : await transactionRepository.getAll(user._id.toString());
+
     const transactions = data.map((transaction) => {
-      const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
+      const { categoryId, paymentMethodId, ...rest } = transaction;
       return {
         ...rest,
         category: categoryId ? categoryId.name : "",
@@ -153,3 +148,39 @@ export async function getAllTransactions(email: string, startDate?: Date, endDat
     throw error;
   }
 }
+
+// export async function getAllTransactions(email: string, startDate?: Date, endDate?: Date) {
+//   try {
+//     const user = await findUserByEmail(email);
+//     if (startDate && endDate) {
+//       const data = await transactionRepository.getAllByDateRange(user._id.toString(), startDate, endDate);
+
+//       console.log(startDate, endDate);
+
+//       const transactions = data.map((transaction) => {
+//         const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
+//         return {
+//           ...rest,
+//           category: categoryId ? categoryId.name : "",
+//           paymentMethod: paymentMethodId ? paymentMethodId.type : "",
+//         };
+//       });
+
+//       return transactions;
+//     }
+
+//     const data = await transactionRepository.getAll(user._id.toString());
+//     const transactions = data.map((transaction) => {
+//       const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
+//       return {
+//         ...rest,
+//         category: categoryId ? categoryId.name : "",
+//         paymentMethod: paymentMethodId ? paymentMethodId.type : "",
+//       };
+//     });
+
+//     return transactions;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
