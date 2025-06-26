@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogClose,
@@ -14,7 +14,6 @@ import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
 import { getCategories } from "@/api/categories";
 import { useQuery } from "@tanstack/react-query";
-import { getPaymentMethods } from "@/api/payment-methods";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import FormTextInput from "@/components/form-components/FormTextInput";
@@ -25,6 +24,7 @@ import { updateTransactionFormSchema, UpdateTransactionFormType } from "@/schema
 import { installmentList, PaymentMethod, paymentMethods as paymentMethodsList } from "@/utils/payments";
 import { Transaction } from "@/types/transaction";
 import { updateTransaction } from "@/api/transactions";
+import { getPaymentMethods } from "@/api/payment-methods";
 
 interface EditTransactionModalProps {
   open: boolean;
@@ -37,18 +37,6 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
   const [loading, setLoading] = useState(false);
   const [currentSelectField, setCurrentSelectField] = useState<string | null>(null);
 
-  const form = useForm<UpdateTransactionFormType>({
-    resolver: zodResolver(updateTransactionFormSchema),
-    defaultValues: {
-      description: data.description,
-      categoryId: data.category,
-      status: data.status,
-      amount: String(data.amount * 100),
-      date: new Date(data.date),
-      type: data.type,
-    },
-  });
-
   const { data: categories } = useQuery({
     queryKey: ["categories"],
     queryFn: getCategories,
@@ -58,6 +46,31 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
     queryKey: ["paymentMethods"],
     queryFn: getPaymentMethods,
   });
+
+  const form = useForm<UpdateTransactionFormType>({
+    resolver: zodResolver(updateTransactionFormSchema),
+    defaultValues: {
+      description: data.description,
+      categoryId: categories?.find((category) => category.name === data.category)?._id,
+      status: data.status,
+      amount: String(data.amount * 100),
+      date: new Date(data.date),
+      type: data.type,
+      paymentMethodId: paymentMethods?.find((paymentMethod) => paymentMethod.type === data.paymentMethod)
+        ?._id,
+      installments: String(data.installmentsCount),
+    },
+  });
+
+  // We get the category id fromt the request and the name from the data param of component
+  // This useEffect is used to set the categoryId value in the form
+  useEffect(() => {
+    form.setValue("categoryId", categories?.find((category) => category.name === data.category)?._id || "");
+    form.setValue(
+      "paymentMethodId",
+      paymentMethods?.find((paymentMethod) => paymentMethod.type === data.paymentMethod)?._id || ""
+    );
+  }, [categories, paymentMethods]);
 
   async function handleSubmit(formData: UpdateTransactionFormType) {
     try {
@@ -117,7 +130,7 @@ export default function EditTransactionModal({ open, onOpenChange, data }: EditT
 
               <FormSelectInput
                 control={form.control}
-                name="paymentMethod"
+                name="paymentMethodId"
                 label="Forma de pagamento"
                 disabled
                 placeholder="Selecione uma forma de pagamento"

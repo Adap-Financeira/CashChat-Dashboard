@@ -51,6 +51,8 @@ export const updateTransactionFormSchema = z.object({
     required_error: "Campo tipo é obrigatório",
     invalid_type_error: "Campo tipo é obrigatório",
   }),
+  installments: z.string().optional(),
+  paymentMethodId: z.string().optional(),
 });
 export type UpdateTransactionFormType = z.infer<typeof updateTransactionFormSchema>;
 

@@ -17,7 +17,7 @@ TODO:
 * [x] Invalidate transactions cache when a transaction is created, updated or deleted
 * [x] Create the create, update and delete transactions modals
 * [x] handle deletion of transaction with installments
-* [ ] Think a way to dont pass null values in installmentsCount and check if the payment method is credit to create installments with the default instalmentCount of 1
+* [x] Think a way to dont pass null values in installmentsCount and check if the payment method is credit to create installments with the default instalmentCount of 1
 * [ ] Add pagination in transactions
 
 - Categories
@@ -32,4 +32,3 @@ TODO:
 
 * [ ] Create a error page
 * [ ] Create whatsapp button to redirect user to whatsapp of adap
-* [ ] After a certain time with the application not used, the token is removed and then the request does not work well. Create a function to refresh the token in the cookie.
