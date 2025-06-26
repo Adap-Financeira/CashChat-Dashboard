@@ -17,11 +17,6 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
-    
   },
   {
     timestamps: true, // cria automaticamente createdAt e updatedAt

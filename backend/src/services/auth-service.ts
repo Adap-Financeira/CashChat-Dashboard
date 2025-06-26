@@ -5,16 +5,11 @@ import { CustomError } from "../utils/errors";
 import bcrypt from "bcryptjs";
 import { productsIds } from "../utils/products";
 
-export async function login(email: string, password: string) {
+export async function login(email: string) {
   try {
     const user = await userRepository.findByEmail(email);
     if (!user) {
       throw new CustomError("Usuário não encontrado.", 404);
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new CustomError("Senha inválida.", 401);
     }
 
     //Check if user has permission to access the dashboard

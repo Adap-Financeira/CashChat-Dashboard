@@ -33,8 +33,9 @@ async function processPermissions(
         return null;
       });
 
-    const expiresAt = warrantyDate ? new Date(warrantyDate) : undefined;
-    console.log(`[processPermissions] Permission expires at: ${expiresAt || "undefined"}`);
+    // Always provide an expiresAt value - use warranty date if available, otherwise set to 1 year from now
+    const expiresAt = warrantyDate ? new Date(warrantyDate) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+    console.log(`[processPermissions] Permission expires at: ${expiresAt}`);
 
     if (isApproved) {
       if (existingPermission) {
@@ -59,7 +60,7 @@ async function processPermissions(
           productId: productId,
           phoneNumber: user.phoneNumber || "",
           access: true,
-          ...(expiresAt ? { expiresAt } : {}), // Only include expiresAt if it exists
+          expiresAt: expiresAt, // Always include expiresAt
         };
         console.log(`[processPermissions] Permission data: ${JSON.stringify(permissionData)}`);
 
@@ -85,50 +86,57 @@ async function processPermissions(
 }
 
 /**
- * Finds or creates a user based on the email
+ * Finds a user based on the email
+ * @param email User's email
+ * @returns The user object or null if not found
+ */
+async function findUserByEmail(email: string) {
+  try {
+    console.log(`[findUserByEmail] Attempting to find user with email: ${email}`);
+    // Try to find the user
+    const existingUser = await userRepository.findByEmail(email);
+    if (existingUser) {
+      console.log(`[findUserByEmail] Existing user found: ${existingUser._id}`);
+      return existingUser;
+    }
+    console.log(`[findUserByEmail] User not found with email: ${email}`);
+    return null;
+  } catch (error) {
+    console.error(`[findUserByEmail] Error finding user: ${error}`);
+    throw error;
+  }
+}
+
+/**
+ * Creates a new user
  * @param email User's email
  * @param name User's name (optional)
  * @param phoneNumber User's phone number (optional)
- * @returns The user object
+ * @returns The newly created user object
  */
-async function findOrCreateUser(email: string, name?: string, phoneNumber?: string) {
+async function createUser(email: string, name?: string, phoneNumber?: string) {
   try {
-    console.log(`[findOrCreateUser] Attempting to find user with email: ${email}`);
-    // Try to find the user first
-    const existingUser = await userRepository.findByEmail(email);
-    if (existingUser) {
-      console.log(`[findOrCreateUser] Existing user found: ${existingUser._id}`);
-      return existingUser;
-    }
-
     console.log(
-      `[findOrCreateUser] User not found, creating new user with email: ${email}, name: ${
+      `[createUser] Creating new user with email: ${email}, name: ${
         name || "not provided"
       }`
     );
-
-    // Use a placeholder password for webhook-created users
-    // This is not a real password and cannot be used to log in
-    // The user will need to reset their password to access the system
-    const webhookPlaceholderPassword = "WEBHOOK_CREATED_USER_NO_PASSWORD";
-    console.log(`[findOrCreateUser] Using placeholder password for webhook-created user`);
 
     const newUser: CreateUserDto = {
       email,
       name: name || email.split("@")[0], // Use part of email as name if not provided
       phoneNumber: phoneNumber || "",
-      password: webhookPlaceholderPassword, // Use placeholder to satisfy validation
     };
 
     await userRepository.create(newUser);
-    console.log(`[findOrCreateUser] New user created for email: ${email}`);
+    console.log(`[createUser] New user created for email: ${email}`);
 
     // Return the newly created user
     const createdUser = await userRepository.findByEmail(email);
-    console.log(`[findOrCreateUser] Retrieved newly created user: ${createdUser?._id || "not found"}`);
+    console.log(`[createUser] Retrieved newly created user: ${createdUser?._id || "not found"}`);
     return createdUser;
   } catch (error) {
-    console.error(`[findOrCreateUser] Error creating user: ${error}`);
+    console.error(`[createUser] Error creating user: ${error}`);
     throw error;
   }
 }
@@ -210,22 +218,37 @@ export function hotmartController(server: Express) {
           });
 
           // Process permissions based on updated status
-          // Find or create user
-          console.log(`[webhook] Finding or creating user with email: ${buyerEmail}`);
-          const user = await findOrCreateUser(buyerEmail, fullName, phoneNumber).catch((err) => {
-            console.error(`[webhook] Error in findOrCreateUser: ${err}`);
+          // Check if user exists first
+          console.log(`[webhook] Checking if user exists with email: ${buyerEmail}`);
+          let user = await findUserByEmail(buyerEmail).catch((err) => {
+            console.error(`[webhook] Error in findUserByEmail: ${err}`);
             return null;
           });
-          console.log(`[webhook] User result: ${user?._id || "null"}`);
+          console.log(`[webhook] User check result: ${user?._id || "null"}`);
 
           // Handle different event types
-          const isApproved = status === "COMPLETED" || event === "PURCHASE_COMPLETE";
+          const isApproved = status === "COMPLETED" || status === "APPROVED" || event === "PURCHASE_COMPLETE" || event === "PURCHASE_APPROVED";
           const isRefunded = status === "REFUNDED" || event === "PURCHASE_REFUNDED";
           console.log(`[webhook] Transaction status: isApproved=${isApproved}, isRefunded=${isRefunded}`);
 
-          // Process permissions if user exists
+          // Implement the new flow for status updates:
           if (user) {
+            // If user exists, create/update permission directly
+            console.log(`[webhook] User exists with ID: ${user._id}, updating permission`);
             await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+          } else {
+            // If user doesn't exist, create user first
+            console.log(`[webhook] User doesn't exist, creating new user with email: ${buyerEmail}`);
+            user = await createUser(buyerEmail, fullName, phoneNumber).catch((err) => {
+              console.error(`[webhook] Error in createUser: ${err}`);
+              return null;
+            });
+            
+            if (user) {
+              // Then create permission for the new user
+              console.log(`[webhook] New user created with ID: ${user._id}, creating permission`);
+              await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+            }
           }
         }
 
@@ -237,26 +260,19 @@ export function hotmartController(server: Express) {
         return;
       }
 
-      // Find or create user
-      console.log(`[webhook] Finding or creating user with email: ${buyerEmail}`);
-      const user = await findOrCreateUser(buyerEmail, fullName, phoneNumber).catch((err) => {
-        console.error(`[webhook] Error in findOrCreateUser: ${err}`);
+      // Check if user exists first
+      console.log(`[webhook] Checking if user exists with email: ${buyerEmail}`);
+      let user = await findUserByEmail(buyerEmail).catch((err) => {
+        console.error(`[webhook] Error in findUserByEmail: ${err}`);
         return null;
       });
-      console.log(`[webhook] User result: ${user?._id || "null"}`);
-
-      if (!user) {
-        console.error(`[webhook] Failed to create or find user with email: ${buyerEmail}`);
-        res.status(500).json({ error: "Failed to create or find user" });
-        return;
-      }
-
+      
       // Handle different event types
-      const isApproved = status === "COMPLETED" || event === "PURCHASE_COMPLETE";
+      const isApproved = status === "COMPLETED" || status === "APPROVED" || event === "PURCHASE_COMPLETE" || event === "PURCHASE_APPROVED";
       const isRefunded = status === "REFUNDED" || event === "PURCHASE_REFUNDED";
       console.log(`[webhook] Transaction status: isApproved=${isApproved}, isRefunded=${isRefunded}`);
 
-      // Create transaction record
+      // Create transaction record first
       console.log(`[webhook] Creating new transaction record for ID: ${transactionId}`);
       try {
         const transactionData = {
@@ -275,9 +291,30 @@ export function hotmartController(server: Express) {
         );
 
         console.log(`[webhook] Transaction created/updated successfully: ${newTransaction._id}`);
-
-        // Process permissions based on transaction status
-        await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+        
+        // Implement the new flow:
+        if (user) {
+          // If user exists, create permission directly
+          console.log(`[webhook] User exists with ID: ${user._id}, creating permission`);
+          await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+        } else {
+          // If user doesn't exist, create user first
+          console.log(`[webhook] User doesn't exist, creating new user with email: ${buyerEmail}`);
+          user = await createUser(buyerEmail, fullName, phoneNumber).catch((err) => {
+            console.error(`[webhook] Error in createUser: ${err}`);
+            return null;
+          });
+          
+          if (!user) {
+            console.error(`[webhook] Failed to create user with email: ${buyerEmail}`);
+            res.status(500).json({ error: "Failed to create user" });
+            return;
+          }
+          
+          // Then create permission for the new user
+          console.log(`[webhook] New user created with ID: ${user._id}, creating permission`);
+          await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+        }
 
         res.status(200).json({
           message: "Webhook processed successfully",
@@ -303,8 +340,14 @@ export function hotmartController(server: Express) {
             console.log(`[webhook] Updated transaction status to: ${status}`);
           }
 
-          // Process permissions based on transaction status
-          await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+          // Implement the new flow for duplicate key errors:
+          if (user) {
+            // If user exists, create/update permission directly
+            console.log(`[webhook] User exists with ID: ${user._id}, updating permission for duplicate key error`);
+            await processPermissions(user, productId.toString(), isApproved, isRefunded, warranty_date);
+          } else {
+            console.error(`[webhook] No user found for duplicate key error handling`);
+          }
 
           res.status(200).json({
             message: "Transaction already exists, status updated",
