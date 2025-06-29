@@ -6,7 +6,9 @@ TODO:
 
 - Dashboard
 
-* [ ] Get the graphs data frm the backend
+* [ ] Get the yearly summary data from the backend
+* [x] Get the transactions (Line chart) data from the backend
+* [x] Get the categories (Doughnut chart) data from the backend
 
 - Reminders
 
@@ -34,7 +36,7 @@ TODO:
 
 - Others
 
-* [ ] Create a error page
-* [ ] Create whatsapp button to redirect user to whatsapp of adap
+* [x] Create a error page
+* [x] Create whatsapp button to redirect user to whatsapp of adap
 
 ![alt text](image.png)

@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/context/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthProvider";
 import TanstackQueryProvider from "@/context/TanstackQueryProvider";
+import { Button } from "@/components/ui/button";
+import WhatsappButton from "@/components/whatsapp-button/WhatsappButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CashChat",
-  description: "CashChat Dashboard",
+  title: "Adap",
+  description: "Adap assistente financeiro",
 };
 
 export default function RootLayout({
@@ -37,6 +39,7 @@ export default function RootLayout({
             </ThemeProvider>
           </AuthProvider>
         </TanstackQueryProvider>
+        <WhatsappButton />
       </body>
     </html>
   );

@@ -6,7 +6,10 @@ import LineTransactionChart from "@/components/charts/TransactionChart";
 import DateFilter from "@/components/date-filter/DateFilter";
 import RemindersCard from "@/components/reminders-card/RemindersCard";
 import TransactionCard from "@/components/transaction-card/TransactionCard";
-import { generateDoughnutCategoriesChartData, generateLineTransactionChartData } from "@/utils/chart-functions";
+import {
+  generateDoughnutCategoriesChartData,
+  generateLineTransactionChartData,
+} from "@/utils/chart-functions";
 import { parseDateStringsToObjects, validateOrDefaultDateStrings } from "@/utils/date";
 import { redirect } from "next/navigation";
 
