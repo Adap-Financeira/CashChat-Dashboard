@@ -148,39 +148,3 @@ export async function getAllTransactions(email: string, startDate?: Date, endDat
     throw error;
   }
 }
-
-// export async function getAllTransactions(email: string, startDate?: Date, endDate?: Date) {
-//   try {
-//     const user = await findUserByEmail(email);
-//     if (startDate && endDate) {
-//       const data = await transactionRepository.getAllByDateRange(user._id.toString(), startDate, endDate);
-
-//       console.log(startDate, endDate);
-
-//       const transactions = data.map((transaction) => {
-//         const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
-//         return {
-//           ...rest,
-//           category: categoryId ? categoryId.name : "",
-//           paymentMethod: paymentMethodId ? paymentMethodId.type : "",
-//         };
-//       });
-
-//       return transactions;
-//     }
-
-//     const data = await transactionRepository.getAll(user._id.toString());
-//     const transactions = data.map((transaction) => {
-//       const { categoryId, paymentMethodId, ...rest } = transaction; // Removing categoryId from return
-//       return {
-//         ...rest,
-//         category: categoryId ? categoryId.name : "",
-//         paymentMethod: paymentMethodId ? paymentMethodId.type : "",
-//       };
-//     });
-
-//     return transactions;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
