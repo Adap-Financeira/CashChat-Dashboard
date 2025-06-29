@@ -2,6 +2,7 @@
 import { getCookie } from "@/app/actions";
 import { revalidateTag } from "next/cache";
 import { CreateTransactionType, DeleteTransactionType, UpdateTransactionType } from "./types/transactions";
+import { Transaction } from "@/types/transaction";
 
 export async function getTransactions(from: string, to: string) {
   try {
@@ -26,7 +27,7 @@ export async function getTransactions(from: string, to: string) {
       throw new Error(data.error);
     }
 
-    return data;
+    return data as Transaction[];
   } catch (error: any) {
     throw error;
   }

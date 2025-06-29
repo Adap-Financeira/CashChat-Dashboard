@@ -4,6 +4,10 @@ TODO:
 
 * [] Add refresh token logic or change the token expiration time to some days
 
+- Dashboard
+
+* [ ] Get the graphs data frm the backend
+
 - Reminders
 
 * [x] Create cache tags for reminders routes
@@ -32,3 +36,5 @@ TODO:
 
 * [ ] Create a error page
 * [ ] Create whatsapp button to redirect user to whatsapp of adap
+
+![alt text](image.png)
