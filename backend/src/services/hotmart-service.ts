@@ -1,9 +1,9 @@
 import * as userRepository from "../repositories/user-repository";
 import * as permissionRepository from "../repositories/permission-repository";
 import Transaction from "../models/TransactionHotmart";
-import { CreateUserDto } from "../dto/user";
 import * as hotmartRepository from "../repositories/hotmart-repository";
 import { TransactionHotmartDto } from "../dto/transaction-hotmart";
+import { CreateUserType } from "../schemas/user-schema";
 
 /**
  * Finds or creates a user based on the email
@@ -20,7 +20,7 @@ export async function findOrCreateUser(email: string, name?: string, phoneNumber
       return existingUser;
     }
 
-    const newUser: CreateUserDto = {
+    const newUser: CreateUserType = {
       email,
       name: name || email.split("@")[0], // Use part of email as name if not provided
       phoneNumber: phoneNumber || "", // Empty string if not provided
