@@ -1,15 +1,10 @@
 "use server";
 import { getCookie } from "@/app/actions";
+import { Category } from "@/types/category";
 import { CustomError } from "@/utils/custom-error";
 import { revalidateTag } from "next/cache";
 
-export async function getCategories(): Promise<
-  {
-    _id: string;
-    name: string;
-    color: string;
-  }[]
-> {
+export async function getCategories(): Promise<Category[]> {
   try {
     const token = await getCookie("token");
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/all`, {

@@ -20,11 +20,10 @@ export default async function Transactions({
   // startDate and endDate will always be in the format dd/MM/yyyy
   const { startDate, endDate } = validateOrDefaultDateStrings(from || "", to || "");
 
-  const transactions = await getTransactions(startDate, endDate);
-  console.log(transactions);
-
   // this will return Date objects of the string dates above
   const { startDate: startObj, endDate: endObj } = parseDateStringsToObjects(startDate, endDate);
+
+  const transactions = await getTransactions(startDate, endDate);
 
   return (
     <div className="flex flex-col gap-5 max-h-screen">

@@ -4,6 +4,12 @@ TODO:
 
 * [] Add refresh token logic or change the token expiration time to some days
 
+- Dashboard
+
+* [ ] Get the yearly summary data from the backend
+* [x] Get the transactions (Line chart) data from the backend
+* [x] Get the categories (Doughnut chart) data from the backend
+
 - Reminders
 
 * [x] Create cache tags for reminders routes
@@ -30,5 +36,7 @@ TODO:
 
 - Others
 
-* [ ] Create a error page
-* [ ] Create whatsapp button to redirect user to whatsapp of adap
+* [x] Create a error page
+* [x] Create whatsapp button to redirect user to whatsapp of adap
+
+![alt text](image.png)
