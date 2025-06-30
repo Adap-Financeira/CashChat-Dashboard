@@ -1,5 +1,27 @@
 import admin from "firebase-admin";
-import credentials from "../firebase-credentials.json";
+
+// Helper para garantir que todas as variáveis existam
+function getEnvVariable(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing environment variable: ${key}`);
+  }
+  return value.replace(/\\n/g, "\n"); // To handle line breaks in the private key
+}
+
+const credentials = {
+  type: getEnvVariable("FIREBASE_TYPE"),
+  project_id: getEnvVariable("FIREBASE_PROJECT_ID"),
+  private_key_id: getEnvVariable("FIREBASE_PRIVATE_KEY_ID"),
+  private_key: getEnvVariable("FIREBASE_PRIVATE_KEY"),
+  client_email: getEnvVariable("FIREBASE_CLIENT_EMAIL"),
+  client_id: getEnvVariable("FIREBASE_CLIENT_ID"),
+  auth_uri: getEnvVariable("FIREBASE_AUTH_URI"),
+  token_uri: getEnvVariable("FIREBASE_TOKEN_URI"),
+  auth_provider_x509_cert_url: getEnvVariable("FIREBASE_AUTH_PROVIDER_X509_CERT_URL"),
+  client_x509_cert_url: getEnvVariable("FIREBASE_CLIENT_X509_CERT_URL"),
+  universe_domain: getEnvVariable("FIREBASE_UNIVERSE_DOMAIN"),
+};
 
 admin.initializeApp({
   credential: admin.credential.cert(credentials as admin.ServiceAccount),
