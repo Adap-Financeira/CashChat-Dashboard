@@ -4,6 +4,10 @@ import bcrypt from "bcryptjs";
 import { UpdateUser } from "../types/User";
 import { CreateUserType } from "../schemas/user-schema";
 
+export async function getAllUsers() {
+	return await userRepository.getAll();
+}
+
 export async function findUserByEmail(email: string) {
   try {
     const user = await userRepository.findByEmail(email);
