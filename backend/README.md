@@ -13,8 +13,12 @@ User
 - [x] Check user id in all transactions, categories and reminders.
 - [ ] Think about some way to have linked accounts for multiple users.
 
-Adicionar um check box para verificar se o usuario quer excluir todas as transações vinculadas a uma categoria quando for excluida a categoria.
+Reports
 
-[x] Alterar texto de data para data da fatura quando o metodo de pagamento for credito
-
-Adicionar opção de marcar como pago
+- [x] Create a document to store the monthly report of the user.
+- [x] Create a service to create the monthly report.
+- [x] Create a service to get the monthly report.
+- [x] Create a repository function to get the monthly report.
+- [x] Create a repository function to create the monthly report.
+- [ ] Create a controller function to get the monthly report.
+- [ ] Create a job to create the monthly report.

@@ -1,6 +1,10 @@
 import User from "../models/User";
 import { CreateUser, UpdateUser } from "../types/User";
 
+export async function getAll() {
+	return await User.find().lean();
+}
+
 export async function create(user: CreateUser) {
   await User.create(user);
 }
