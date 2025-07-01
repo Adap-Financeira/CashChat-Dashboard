@@ -24,6 +24,7 @@ TODO:
 * [x] Create the create, update and delete transactions modals
 * [x] handle deletion of transaction with installments
 * [x] Think a way to dont pass null values in installmentsCount and check if the payment method is credit to create installments with the default instalmentCount of 1
+* [ ] Add limit to date picker (60 days)
 * [ ] Add pagination in transactions
 
 - Categories

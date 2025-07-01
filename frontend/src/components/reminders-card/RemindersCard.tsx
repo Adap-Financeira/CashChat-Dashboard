@@ -11,7 +11,6 @@ export default async function RemindersCard() {
     cache: "no-store",
   });
   const data = await reminders.json();
-  console.log(data);
 
   return (
     <div className="flex flex-col grow bg-background px-6 pt-5 pb-10 rounded-md relative gap-2 shadow-md dark:border">

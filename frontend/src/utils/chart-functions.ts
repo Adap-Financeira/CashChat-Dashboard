@@ -1,4 +1,5 @@
 import { Category } from "@/types/category";
+import { MonthlyReport } from "@/types/reports";
 import { Transaction } from "@/types/transaction";
 import {
   format,
@@ -121,12 +122,14 @@ export function generateDoughnutCategoriesChartData(transactions: Transaction[],
     };
   });
 
-  // Prepare chart data
-  const labels = categoryData.map(({ category, percentage }) => `${category.name} (${percentage}%)`);
+  // Remove categories with 0%
+  const filteredCategoryData = categoryData.filter(({ percentage }) => percentage > 0);
 
-  const data = categoryData.map(({ count }) => count);
-  const backgroundColors = categories.map((category) => category.color);
-  const borderColors = categories.map((category) => category.color);
+  // Prepare chart data
+  const labels = filteredCategoryData.map(({ category, percentage }) => `${category.name} (${percentage}%)`);
+  const data = filteredCategoryData.map(({ count }) => count);
+  const backgroundColors = filteredCategoryData.map(({ category }) => category.color);
+  const borderColors = filteredCategoryData.map(({ category }) => category.color);
 
   return {
     labels,
@@ -137,6 +140,43 @@ export function generateDoughnutCategoriesChartData(transactions: Transaction[],
         backgroundColor: backgroundColors,
         borderColor: borderColors,
         borderWidth: 1,
+      },
+    ],
+  };
+}
+
+export function generateStackedBarChartData(data: MonthlyReport[]) {
+  const labels = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Despesas",
+        data: data.map((s) => s.expense),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: "Receitas",
+        data: data.map((s) => s.income),
+        backgroundColor: "rgb(75, 192, 192)",
+      },
+      {
+        label: "Saldo",
+        data: data.map((s) => s.balance),
+        backgroundColor: "rgb(53, 162, 235)",
       },
     ],
   };

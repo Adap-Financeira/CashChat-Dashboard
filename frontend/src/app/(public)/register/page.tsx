@@ -86,7 +86,6 @@ export default function Register() {
       });
 
       const user = await data.json();
-      console.log(user);
       if (data.status !== 200) {
         toast.error(user.error);
         await deleteAccount(newUser.user);
@@ -97,8 +96,6 @@ export default function Register() {
       toast.success("Conta criada com sucesso, você será redirecionado para a tela de login.");
       router.push("/login");
     } catch (error) {
-      console.log(error);
-
       if (error instanceof FirebaseError) {
         if (error.code === "auth/email-already-in-use") {
           toast.error("Esse email já foi cadastrado.");

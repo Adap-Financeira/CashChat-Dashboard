@@ -62,8 +62,6 @@ export default function ReminderModal({ children, data }: ReminderModalProps) {
       }
 
       if (date < new Date()) {
-        console.log("reminder date is less than today");
-
         setLoading(false);
         setFormErrors({
           date: "Insira uma data futura para o lembrete.",

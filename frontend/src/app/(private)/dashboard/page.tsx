@@ -1,4 +1,5 @@
 import { getCategories } from "@/api/categories";
+import { getYearlySummary } from "@/api/reports";
 import { getTransactions } from "@/api/transactions";
 import { DoughnutChart } from "@/components/charts/DoughnutChart";
 import StackedBarChart from "@/components/charts/StackedBarChart";
@@ -9,6 +10,7 @@ import TransactionCard from "@/components/transaction-card/TransactionCard";
 import {
   generateDoughnutCategoriesChartData,
   generateLineTransactionChartData,
+  generateStackedBarChartData,
 } from "@/utils/chart-functions";
 import { parseDateStringsToObjects, validateOrDefaultDateStrings } from "@/utils/date";
 import { redirect } from "next/navigation";
@@ -33,9 +35,11 @@ export default async function Dashboard({
 
   const transactions = await getTransactions(startDate, endDate);
   const categories = await getCategories();
+  const yearlySummary = await getYearlySummary("2025");
 
   const lineData = generateLineTransactionChartData(transactions, startObj, endObj);
   const doughnutData = generateDoughnutCategoriesChartData(transactions, categories);
+  const stackedBarData = generateStackedBarChartData(yearlySummary);
 
   const incomeAmount = transactions
     .filter((transaction: any) => transaction.type === "income")
@@ -73,9 +77,8 @@ export default async function Dashboard({
           {/* <RemindersCard /> */}
           <div className="flex flex-col justify-center items-center lg:flex-row gap-5 w-full">
             <LineTransactionChart data={lineData} />
-            <StackedBarChart />
+            <StackedBarChart data={stackedBarData} />
           </div>
-
           <DoughnutChart data={doughnutData} />
         </div>
       </div>
