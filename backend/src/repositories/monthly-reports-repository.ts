@@ -8,3 +8,8 @@ export async function create(data: CreateMonthlyReport) {
 export async function get(userId: string, month: number, year: number) {
   return await MonthlyReports.findOne({ userId, month, year }).lean();
 }
+
+export async function getAllByYear(userId: string, year: number) {
+  return await MonthlyReports.find({ userId, year }).lean();
+}
+
