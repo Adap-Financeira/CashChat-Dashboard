@@ -7,6 +7,7 @@ Categories
 
 - [x] Create a ref in transactions to link category with transactions.
 - [x] Check if user is the owner of the category before deleting it.
+- [x] Create default categories for new users.
 
 User
 
@@ -20,5 +21,5 @@ Reports
 - [x] Create a service to get the monthly report.
 - [x] Create a repository function to get the monthly report.
 - [x] Create a repository function to create the monthly report.
-- [ ] Create a controller function to get the monthly report.
-- [ ] Create a job to create the monthly report.
+- [x] Create a controller function to get the monthly report.
+- [x] Create a job to create the monthly report.

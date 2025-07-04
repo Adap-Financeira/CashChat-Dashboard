@@ -1,19 +1,20 @@
+import mongoose from "mongoose";
 import { PermissionDto } from "../dto/permission";
 import * as permissionRepository from "../repositories/permission-repository";
 import { CustomError } from "../utils/errors";
 import { findUserByEmail } from "./user-service";
 
-export async function createPermission(permission: PermissionDto) {
+export async function createPermission(permission: PermissionDto, session?: mongoose.ClientSession) {
   try {
     const permissionExists = await permissionRepository.findByUserIdAndProductId(
       permission.userId,
       permission.productId
     );
     if (permissionExists) {
-      throw new CustomError("Permission already exists", 400);
+      throw new CustomError("Permissão já existe.", 400);
     }
 
-    return await permissionRepository.create(permission);
+    return await permissionRepository.create(permission, session);
   } catch (error) {
     throw error;
   }
