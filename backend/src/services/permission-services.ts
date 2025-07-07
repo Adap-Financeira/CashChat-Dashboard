@@ -20,17 +20,17 @@ export async function createPermission(permission: PermissionDto, session?: mong
   }
 }
 
-export async function createOrUpdatePermission(permission: PermissionDto) {
+export async function createOrUpdatePermission(permission: PermissionDto, session?: mongoose.ClientSession) {
   try {
     const permissionExists = await permissionRepository.findByUserIdAndProductId(
       permission.userId,
       permission.productId
     );
     if (permissionExists) {
-      return await permissionRepository.update(permission, permissionExists._id.toString());
+      return await permissionRepository.update(permission, permissionExists._id.toString(), session);
     }
 
-    return await permissionRepository.create(permission);
+    return await permissionRepository.create(permission, session);
   } catch (error) {
     throw error;
   }

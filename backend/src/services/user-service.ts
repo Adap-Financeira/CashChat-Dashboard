@@ -25,9 +25,25 @@ export async function checkPhoneNumberAvailability(phoneNumber: string) {
   try {
     const user = await userRepository.findByPhoneNumber(phoneNumber);
 
-    if (user) {
+    if (user && user.firebaseId) {
       throw new CustomError("Um usuário já foi cadastrado com este telefone.", 400);
     }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function findUserById(id: string) {
+  try {
+    const user = await userRepository.findById(id);
+
+    if (!user) {
+      throw new CustomError("Usuário não encontrado.", 404);
+    }
+
+    return user;
   } catch (error) {
     throw error;
   }
@@ -69,12 +85,38 @@ export async function createUser(data: CreateUserType, session?: mongoose.Client
   }
 }
 
+export async function createOrUpdateUserByPhoneNumber(
+  data: CreateUserType,
+  session?: mongoose.ClientSession
+) {
+  try {
+    const user = await userRepository.findByPhoneNumber(data.phoneNumber);
+    if (user) {
+      return await userRepository.updateById(user._id.toString(), data, session);
+    }
+    return await userRepository.create(data, session);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function update(email: string, data: UpdateUser) {
   try {
     // Check if the user exists
     await findUserByEmail(email);
 
     return await userRepository.update(email, data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateById(id: string, data: UpdateUser) {
+  try {
+    // Check if the user exists
+    const user = await findUserById(id);
+
+    return await userRepository.updateById(id, data);
   } catch (error) {
     throw error;
   }

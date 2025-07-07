@@ -12,6 +12,8 @@ Categories
 User
 
 - [x] Check user id in all transactions, categories and reminders.
+- [ ] If some user already has the registry in mongodb, then check the phone number and if it is the same, then update the user.
+      Se o usuário já tiver acesso ao chatbot e quiser criar uma conta para o dashboard com email, senha, etc.. e já tiver um registro no mongodb, então precisamos verificar se o número de telefone é o mesmo para atualizarmos um registro existente e criarmos a conta dele.
 - [ ] Think about some way to have linked accounts for multiple users.
 
 Reports

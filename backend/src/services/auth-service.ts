@@ -76,13 +76,19 @@ export async function registerDashboard(data: CreateUserType) {
   const session = await mongoose.startSession();
   session.startTransaction();
 
+  let newUser: any | null = null;
+  let shouldCreateCategories: boolean = true;
+
   let firebaseUser: admin.auth.UserRecord | null = null;
   try {
     // Check if email is already in use
     await userService.checkEmailAvailability(data.email);
 
     // Check if the phone number is already in use
-    await userService.checkPhoneNumberAvailability(data.phoneNumber);
+    // This is returning the user because when the dashboard is not released, the user
+    // could already have an account without name, email, firebaseId, etc.
+    // In this case, the user was already registered with only the phone number.
+    const previousUser = await userService.checkPhoneNumberAvailability(data.phoneNumber);
 
     // Create the user in firebase
     firebaseUser = await admin.auth().createUser({
@@ -91,20 +97,30 @@ export async function registerDashboard(data: CreateUserType) {
       displayName: data.name,
     });
 
-    // Create the user in mongodb
-    const newUser = await userService.createUser(
-      {
+    // If the user was already registered with only the phone number, update the user
+    if (previousUser) {
+      newUser = await userService.updateById(previousUser._id.toString(), {
         ...data,
         firebaseId: firebaseUser.uid,
         password: "",
-      },
-      session
-    );
+      });
+      shouldCreateCategories = false;
+    } else {
+      // If the user was not registered, create a new user
+      newUser = await userService.createUser(
+        {
+          ...data,
+          firebaseId: firebaseUser.uid,
+          password: "",
+        },
+        session
+      );
+    }
 
     // Create the permissions for the user
 
     // Create dashboard permission
-    await permissionService.createPermission(
+    await permissionService.createOrUpdatePermission(
       {
         userId: newUser._id.toString(),
         productId: "dashboard",
@@ -116,7 +132,7 @@ export async function registerDashboard(data: CreateUserType) {
     );
 
     // Create chatbot permission
-    await permissionService.createPermission(
+    await permissionService.createOrUpdatePermission(
       {
         userId: newUser._id.toString(),
         productId: "chatbot",
@@ -128,7 +144,7 @@ export async function registerDashboard(data: CreateUserType) {
     );
 
     // Create categories permission
-    await permissionService.createPermission(
+    await permissionService.createOrUpdatePermission(
       {
         userId: newUser._id.toString(),
         productId: "categories",
@@ -141,38 +157,41 @@ export async function registerDashboard(data: CreateUserType) {
 
     // Create user default categories
     //gastos fixos, lazer, investimento, conhecimento, doação
-    await categoryService.createManyCategoriesWithId(
-      newUser._id.toString(),
-      [
-        {
-          name: "Gastos fixos",
-          color: "#FF0000",
-        },
-        {
-          name: "Lazer",
-          color: "#0000FF",
-        },
-        {
-          name: "Investimento",
-          color: "#00FF00",
-        },
-        {
-          name: "Conhecimento",
-          color: "#FFFF00",
-        },
-        {
-          name: "Doação",
-          color: "#4B0082",
-        },
-      ],
-      session
-    );
+    if (shouldCreateCategories) {
+      await categoryService.createManyCategoriesWithId(
+        newUser._id.toString(),
+        [
+          {
+            name: "Gastos fixos",
+            color: "#FF0000",
+          },
+          {
+            name: "Lazer",
+            color: "#0000FF",
+          },
+          {
+            name: "Investimento",
+            color: "#00FF00",
+          },
+          {
+            name: "Conhecimento",
+            color: "#FFFF00",
+          },
+          {
+            name: "Doação",
+            color: "#4B0082",
+          },
+        ],
+        session
+      );
+    }
 
     await session.commitTransaction();
     session.endSession();
 
     return newUser;
   } catch (error) {
+    console.log(error);
     await session.abortTransaction();
 
     // Delete the user in firebase

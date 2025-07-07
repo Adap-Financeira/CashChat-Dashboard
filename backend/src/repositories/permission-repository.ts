@@ -34,6 +34,9 @@ export async function findByUserIdAndProductId(userId: string, productId: string
  * @param id Permission ID
  * @returns The updated permission
  */
-export async function update(permission: any, id: string) {
+export async function update(permission: any, id: string, session?: mongoose.ClientSession) {
+  if (session) {
+    return await Permission.findByIdAndUpdate(id, permission, { new: true, session });
+  }
   return await Permission.findByIdAndUpdate(id, permission, { new: true });
 }
