@@ -44,8 +44,9 @@ mongoose
   .then(() => console.log("Conectado ao MongoDB"))
   .catch((err) => console.error("Erro ao conectar MongoDB:", err));
 
-const PORT = 5001;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+app.listen(process.env.PORT || 5001, () =>
+  console.log(`Servidor rodando na porta ${process.env.PORT || 5001}`)
+);
 
 // Jobs
 createMonthlyReportJob();

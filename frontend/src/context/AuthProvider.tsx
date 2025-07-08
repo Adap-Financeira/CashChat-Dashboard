@@ -50,14 +50,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const token = await firebaseUser.getIdToken();
           setUser(firebaseUser);
           await setCookie(token, ID_TOKEN_COOKIE);
-          console.log("ID Token cookie set/updated.");
         } catch (error) {
           console.error("Error getting ID token:", error);
         }
       } else {
         setUser(null);
         removeCookie(ID_TOKEN_COOKIE);
-        console.log("User signed out, ID Token cookie removed.");
       }
       setLoading(false);
     });
@@ -73,7 +71,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         const token = await user.getIdToken(true); // force refresh
         await setCookie(token, ID_TOKEN_COOKIE);
-        console.log("ID token refreshed and cookie updated.");
       } catch (error) {
         console.error("Error refreshing ID token:", error);
       }

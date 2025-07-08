@@ -13,7 +13,6 @@ export async function register(data: RegisterSchemaType) {
     });
 
     const result = await response.json();
-    console.log(result);
     return result;
   } catch (error) {
     throw error;

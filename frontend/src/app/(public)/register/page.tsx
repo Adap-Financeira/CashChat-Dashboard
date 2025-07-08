@@ -31,15 +31,11 @@ export default function Register() {
 
   async function onSubmit(data: RegisterSchemaType) {
     try {
-      console.log(data);
-
       const response = await register(data);
-      console.log(response);
 
       toast.success(response.message);
       router.push("/login");
     } catch (error) {
-      console.log(error);
       if (error instanceof CustomError) {
         toast.error(error.message);
       }
