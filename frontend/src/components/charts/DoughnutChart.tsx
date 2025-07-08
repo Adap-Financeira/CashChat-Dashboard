@@ -1,6 +1,7 @@
 "use client";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
+import { ChartContainer } from "../chart-container/ChartContainer";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -12,7 +13,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Categorias",
+      text: "Distribuição por Categorias",
     },
   },
 };
@@ -22,9 +23,11 @@ interface DoughnutChartProps {
 }
 
 export function DoughnutChart({ data }: DoughnutChartProps) {
+  const isDataEmpty = !data.datasets[0] || data.datasets[0].data.length === 0;
+
   return (
-    <div className="w-full lg:w-1/2 border p-2 pb-6">
+    <ChartContainer title="Distribuição por Categorias" isDataEmpty={isDataEmpty}>
       <Doughnut data={data} options={options} className="m-auto" />
-    </div>
+    </ChartContainer>
   );
 }

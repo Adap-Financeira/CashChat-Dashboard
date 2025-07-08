@@ -1,111 +1,51 @@
 "use client";
-import InputPassword from "@/components/inputs/InputPassword";
-import InputText from "@/components/inputs/InputText";
 import ThemeButton from "@/components/theme-button/ThemeButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import { registerSchema } from "@/schemas/schemas";
-import { FirebaseError } from "firebase/app";
-import { ID_TOKEN_COOKIE, useAuth } from "@/context/AuthProvider";
-import { setCookie } from "@/app/actions";
+import { registerSchema, RegisterSchemaType } from "@/schemas/schemas";
 import { useRouter } from "next/navigation";
-
-interface FormErrors {
-  email: string | undefined;
-  password: string | undefined;
-}
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FormTextInput from "@/components/form-components/FormTextInput";
+import { Form } from "@/components/ui/form";
+import FormPasswordInput from "@/components/form-components/FormPasswordInput";
+import FormPhoneInput from "@/components/form-components/FormPhoneInput";
+import { register } from "@/api/auth";
+import { CustomError } from "@/utils/custom-error";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [formErrors, setFormErrors] = useState<FormErrors>({
-    email: undefined,
-    password: undefined,
-  });
   const [pending, setPending] = useState(false);
-  const { createUser, deleteAccount } = useAuth();
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const form = useForm<RegisterSchemaType>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+    },
+  });
+
+  async function onSubmit(data: RegisterSchemaType) {
     try {
-      setPending(true);
-      const result = registerSchema.safeParse({
-        email,
-        password,
-      });
+      console.log(data);
 
-      if (!result.success) {
-        const flat = result.error.flatten().fieldErrors;
-        setFormErrors({
-          email: flat.email?.[0],
-          password: flat.password?.[0],
-        });
-        setPending(false);
-        return;
-      }
+      const response = await register(data);
+      console.log(response);
 
-      // Check if the email is valid for registration
-      const isEmailValid = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-        cache: "no-store",
-      });
-
-      const { isValid } = await isEmailValid.json();
-      if (!isValid) {
-        toast.error("Esse email é inválido para cadastro no dashboard.");
-        setPending(false);
-        return;
-      }
-
-      // Create a new user in firebase
-      const newUser = await createUser(email, password);
-
-      // Get the uid token of the user
-      const token = await newUser.user.getIdToken();
-
-      // Set the cookie with user token
-      await setCookie(token, ID_TOKEN_COOKIE);
-
-      // Perform fetch passing the token in the cookie to link this firebase
-      // user with the user created in mongodb
-      const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/link-account`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `token=${token};`,
-        },
-        credentials: "include",
-        cache: "no-store",
-      });
-
-      const user = await data.json();
-      if (data.status !== 200) {
-        toast.error(user.error);
-        await deleteAccount(newUser.user);
-        setPending(false);
-        return;
-      }
-
-      toast.success("Conta criada com sucesso, você será redirecionado para a tela de login.");
+      toast.success(response.message);
       router.push("/login");
     } catch (error) {
-      if (error instanceof FirebaseError) {
-        if (error.code === "auth/email-already-in-use") {
-          toast.error("Esse email já foi cadastrado.");
-          setPending(false);
-          return;
-        }
+      console.log(error);
+      if (error instanceof CustomError) {
+        toast.error(error.message);
       }
+
       toast.error("Erro ao realizar cadastro");
     }
-    setPending(false);
   }
 
   return (
@@ -128,41 +68,50 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col">
-            <form onSubmit={handleSubmit} className="flex flex-col justify-center">
-              <div className="flex flex-col gap-[12px]">
-                <h2 className="text-lg font-bold">Crie sua conta!</h2>
-                <div>
-                  <p className="text-md">Encontre parceiros para treinar ao ar livre.</p>
-                  <p className="text-md">Conecte-se e comece agora! 💪</p>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center">
+                <div className="flex flex-col gap-[12px]">
+                  <h2 className="text-lg font-bold">Crie sua conta!</h2>
+                  <div>
+                    <p className="text-md">Encontre parceiros para treinar ao ar livre.</p>
+                    <p className="text-md">Conecte-se e comece agora! 💪</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex flex-col gap-[16px] mt-6">
-                <InputText
-                  label="Email"
-                  id="email"
-                  name="email"
-                  placeholder="Ex.: email@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  error={formErrors.email}
-                />
+                <div className="flex flex-col gap-[16px] mt-6">
+                  <FormTextInput
+                    control={form.control}
+                    name="name"
+                    label="Nome"
+                    placeholder="Ex.: João Silva"
+                  />
 
-                <InputPassword
-                  label="Senha"
-                  id="password"
-                  name="password"
-                  placeholder="Ex.: 123546"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  error={formErrors.password}
-                />
-              </div>
+                  <FormTextInput
+                    control={form.control}
+                    name="email"
+                    label="Email"
+                    placeholder="Ex.: email@email.com"
+                  />
 
-              <Button className="w-full h-[48px] cursor-pointer mt-6" disabled={pending}>
-                Cadastrar
-              </Button>
-            </form>
+                  <FormPhoneInput
+                    control={form.control}
+                    name="phoneNumber"
+                    label="Telefone"
+                    placeholder="Ex.: (11) 99999-9999"
+                  />
+                  <FormPasswordInput
+                    control={form.control}
+                    name="password"
+                    label="Senha"
+                    placeholder="Ex.: 123546"
+                  />
+                </div>
+
+                <Button className="w-full h-[48px] cursor-pointer mt-6" disabled={pending}>
+                  Cadastrar
+                </Button>
+              </form>
+            </Form>
 
             <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
               <p>Já tem uma conta?</p>

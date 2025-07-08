@@ -2,13 +2,15 @@ TODO:
 
 - Authentication
 
-* [] Add refresh token logic or change the token expiration time to some days
+* [x] Add refresh token logic or change the token expiration time to some days
+* [x] Add register page (email, name, phone number, password) to create the user free trial access with permissions (chatbot adap, dashboard, categories)
 
 - Dashboard
 
-* [ ] Get the yearly summary data from the backend
+* [x] Get the yearly summary data from the backend
 * [x] Get the transactions (Line chart) data from the backend
 * [x] Get the categories (Doughnut chart) data from the backend
+* [x] Create some messages to hide charts when no data is available
 
 - Reminders
 

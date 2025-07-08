@@ -79,7 +79,9 @@ export default async function Dashboard({
             <LineTransactionChart data={lineData} />
             <StackedBarChart data={stackedBarData} />
           </div>
-          <DoughnutChart data={doughnutData} />
+          <div className="flex flex-col justify-center items-center lg:flex-row gap-5 w-full">
+            <DoughnutChart data={doughnutData} />
+          </div>
         </div>
       </div>
     </div>

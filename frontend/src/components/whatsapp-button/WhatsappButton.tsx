@@ -5,8 +5,7 @@ import whatsappIcon from "@/assets/whatsapp.svg";
 
 export default function WhatsappButton() {
   const handleClick = () => {
-    // Replace with your WhatsApp contact link or action
-    window.open("https://wa.me/your-number-here", "_blank");
+    window.open("https://wa.me/+5512992444308", "_blank");
   };
 
   return (

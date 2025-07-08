@@ -6,9 +6,13 @@ export const loginSchema = z.object({
 });
 
 export const registerSchema = z.object({
-  email: z.string().email({ message: "Email inválido" }),
-  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  name: z.string().min(3),
+  email: z.string().email(),
+  phoneNumber: z.string().min(11),
+  password: z.string().min(6),
 });
+
+export type RegisterSchemaType = z.infer<typeof registerSchema>;
 
 export const resetPasswordSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
