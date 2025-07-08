@@ -12,9 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface ThemeButtonProps extends React.ComponentProps<"button"> {}
-
-export default function ThemeButton({ ...props }: ThemeButtonProps) {
+export default function ThemeButton({ ...props }: React.ComponentProps<"button">) {
   const { setTheme } = useTheme();
 
   return (
