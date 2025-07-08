@@ -8,7 +8,7 @@ import { getTransactions } from "@/api/transactions";
 export default async function Transactions({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const { from, to } = await searchParams;
 

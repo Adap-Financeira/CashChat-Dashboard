@@ -18,7 +18,7 @@ import { redirect } from "next/navigation";
 export default async function Dashboard({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const { from, to } = await searchParams;
 
