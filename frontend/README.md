@@ -2,13 +2,15 @@ TODO:
 
 - Authentication
 
-* [] Add refresh token logic or change the token expiration time to some days
+* [x] Add refresh token logic or change the token expiration time to some days
+* [x] Add register page (email, name, phone number, password) to create the user free trial access with permissions (chatbot adap, dashboard, categories)
 
 - Dashboard
 
-* [ ] Get the yearly summary data from the backend
+* [x] Get the yearly summary data from the backend
 * [x] Get the transactions (Line chart) data from the backend
 * [x] Get the categories (Doughnut chart) data from the backend
+* [x] Create some messages to hide charts when no data is available
 
 - Reminders
 
@@ -24,6 +26,7 @@ TODO:
 * [x] Create the create, update and delete transactions modals
 * [x] handle deletion of transaction with installments
 * [x] Think a way to dont pass null values in installmentsCount and check if the payment method is credit to create installments with the default instalmentCount of 1
+* [ ] Add limit to date picker (60 days)
 * [ ] Add pagination in transactions
 
 - Categories

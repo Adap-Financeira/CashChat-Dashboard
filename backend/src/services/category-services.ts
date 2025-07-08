@@ -26,7 +26,11 @@ export async function getCategoryByName(email: string, name: string) {
   }
 }
 
-export async function createCategoryWithEmail(email: string, data: CreateCategoryType) {
+export async function createCategoryWithEmail(
+  email: string,
+  data: CreateCategoryType,
+  session?: mongoose.ClientSession
+) {
   try {
     const user = await findUserByEmail(email);
 
@@ -44,12 +48,104 @@ export async function createCategoryWithEmail(email: string, data: CreateCategor
       throw new CustomError("Essa cor não foi encontrada ou não esta disponivel no momento.", 404);
     }
 
-    return categoryRepository.create({
-      ...data,
-      name: data.name.toLowerCase(),
-      userId: user._id.toString(),
-    });
+    return categoryRepository.create(
+      {
+        ...data,
+        name: data.name.toLowerCase(),
+        userId: user._id.toString(),
+      },
+      session
+    );
   } catch (error) {
+    throw error;
+  }
+}
+
+// export async function createManyCategories(
+//   email: string,
+//   data: CreateCategoryType[],
+//   session?: mongoose.ClientSession
+// ) {
+//   try {
+//     const user = await findUserByEmail(email);
+
+//     for (const category of data) {
+//       // Check if category already exists
+//       const categoryExists = await categoryRepository.getByName(category.name.toLowerCase(), user._id.toString());
+
+//       if (categoryExists) {
+//         throw new CustomError("Essa categoria já existe.", 400);
+//       }
+
+//       // Check if colors exists
+//       const colorsExists = await colorsRepository.getByValue(category.color);
+
+//       if (!colorsExists) {
+//         throw new CustomError("Essa cor não foi encontrada ou não esta disponivel no momento.", 404);
+//       }
+
+//       return categoryRepository.create(
+//         {
+//           ...category,
+//           name: category.name.toLowerCase(),
+//           userId: user._id.toString(),
+//         },
+//         session
+//       );
+//     }
+//   } catch (error) {
+//     throw error;
+//   }
+// }
+
+export async function createManyCategoriesWithId(
+  id: string,
+  data: CreateCategoryType[],
+  session?: mongoose.ClientSession
+) {
+  // 1. Initial Checks
+  if (!data || data.length === 0) {
+    return []; // Nothing to create, return an empty array.
+  }
+
+  try {
+    // 2. Perform Bulk Validations (Much more performant)
+    const categoryNames = data.map(c => c.name.toLowerCase());
+    const colorValues = [...new Set(data.map(c => c.color))]; // Get unique colors
+
+    // Use Promise.all to run database checks concurrently
+    const [existingCategories, availableColors] = await Promise.all([
+      categoryRepository.getManyByNames(categoryNames, id),
+      colorsRepository.getManyByValues(colorValues),
+    ]);
+
+    // Check for duplicate categories
+    if (existingCategories.length > 0) {
+      const duplicateNames = existingCategories.map(c => c.name).join(", ");
+      throw new CustomError(`As seguintes categorias já existem: ${duplicateNames}.`, 400);
+    }
+
+    // Check that all required colors were found
+    if (availableColors.length !== colorValues.length) {
+      throw new CustomError("Uma ou mais cores não foram encontradas ou não estão disponíveis.", 404);
+    }
+
+    // 3. Prepare data for bulk insertion
+    const categoriesToCreate = data.map(category => ({
+      ...category,
+      name: category.name.toLowerCase(),
+      userId: id,
+    }));
+
+    // 4. Perform a single, atomic bulk create operation
+    // This assumes your repository has a `createMany` method.
+    // In Mongoose, this is typically `CategoryModel.insertMany()`.
+    const newCategories = await categoryRepository.createMany(categoriesToCreate, session);
+
+    return newCategories;
+
+  } catch (error) {
+    // Re-throw the error to be handled by a higher-level error handler
     throw error;
   }
 }

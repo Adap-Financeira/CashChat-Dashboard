@@ -21,8 +21,6 @@ export default function ResetPassword() {
   const { resetPassword } = useAuth();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    console.log(email);
-
     e.preventDefault();
     try {
       setPending(true);
@@ -47,7 +45,6 @@ export default function ResetPassword() {
         </div>
       );
     } catch (error) {
-      console.log(error);
       toast.error("Erro ao enviar email");
     }
     setPending(false);

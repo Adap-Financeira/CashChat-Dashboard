@@ -7,6 +7,7 @@ const publicRoutes = [
 
 const REDIRECT_WHEN_NOT_AUTHENTICATED_ROUTE = "/login";
 
+// We do not need it anymore since we're using firebase auth
 export async function middleware(req: NextRequest) {
   // const path = req.nextUrl.pathname;
   // const isPublicRoute = publicRoutes.find((route) => route.path === path);

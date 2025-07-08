@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { PermissionDto } from "../dto/permission";
 import Permission from "../models/Permission";
 
@@ -10,7 +11,10 @@ export async function findByUserId(userId: string) {
  * @param permission Permission data to create
  * @returns The created permission
  */
-export async function create(permission: PermissionDto) {
+export async function create(permission: PermissionDto, session?: mongoose.ClientSession) {
+  if (session) {
+    return (await Permission.create([permission], { session }))[0];
+  }
   return await Permission.create(permission);
 }
 
@@ -30,7 +34,9 @@ export async function findByUserIdAndProductId(userId: string, productId: string
  * @param id Permission ID
  * @returns The updated permission
  */
-export async function update(permission: any, id: string) {
+export async function update(permission: any, id: string, session?: mongoose.ClientSession) {
+  if (session) {
+    return await Permission.findByIdAndUpdate(id, permission, { new: true, session });
+  }
   return await Permission.findByIdAndUpdate(id, permission, { new: true });
 }
-

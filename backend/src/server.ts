@@ -15,7 +15,7 @@ import { categoryController } from "./controllers/category-controller";
 import { remindersController } from "./controllers/reminders-controller";
 import { paymentMethodController } from "./controllers/payment-method-controller";
 import { createMonthlyReportJob } from "./jobs/create-monthly-report";
-
+import { reportsController } from "./controllers/reports-controller";
 const app = express();
 
 app.use(
@@ -34,17 +34,18 @@ colorsController(app);
 categoryController(app);
 remindersController(app);
 paymentMethodController(app);
+hotmartController(app);
+reportsController(app);
 
 const dbName = process.env.NODE_ENV === "prod" ? "prod" : "test";
-hotmartController(app);
 
 mongoose
   .connect(process.env.MONGO_URI!, { dbName })
   .then(() => console.log("Conectado ao MongoDB"))
   .catch((err) => console.error("Erro ao conectar MongoDB:", err));
 
-// Jobs
-// createMonthlyReportJob();
-
-const PORT = process.env.PORT ||5001;
+const PORT = 5001;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
+// Jobs
+createMonthlyReportJob();

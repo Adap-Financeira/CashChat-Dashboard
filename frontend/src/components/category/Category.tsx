@@ -15,7 +15,7 @@ interface CategoryProps {
 
 export default function Category({ id, name, color, colors }: CategoryProps) {
   return (
-    <div className="flex items-center justify-between pr-3 gap-2 bg-gray-100 dark:bg-gray-800 h-[52px] rounded-md relative">
+    <div className="flex items-center justify-between pr-3 gap-2 border h-[52px] rounded-md relative">
       <span
         className="w-2 h-full rounded-md absolute left-0 top-0 rounded-tr-none rounded-br-none"
         style={{ backgroundColor: color }}

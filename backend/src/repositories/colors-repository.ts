@@ -11,3 +11,7 @@ export async function getByName(name: string) {
 export async function getByValue(value: string) {
   return await Colors.findOne({ value });
 }
+
+export async function getManyByValues(values: string[]) {
+  return await Colors.find({ value: { $in: values } });
+}
