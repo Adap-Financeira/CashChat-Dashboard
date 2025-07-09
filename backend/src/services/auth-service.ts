@@ -1,6 +1,7 @@
 import * as userService from "../services/user-service";
 import * as permissionService from "../services/permission-services";
 import * as categoryService from "../services/category-services";
+import * as zapierService from "../services/zapier-service";
 import { CustomError } from "../utils/errors";
 import { CreateUserType } from "../schemas/user-schema";
 import admin from "../lib/firebase-admin";
@@ -185,6 +186,9 @@ export async function registerDashboard(data: CreateUserType) {
         session
       );
     }
+
+    // Send user information to Zapier
+    await zapierService.sendUserInformationToZapier(newUser.email, newUser.name, newUser.phoneNumber);
 
     await session.commitTransaction();
     session.endSession();

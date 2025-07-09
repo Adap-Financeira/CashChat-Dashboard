@@ -111,12 +111,12 @@ export async function update(email: string, data: UpdateUser) {
   }
 }
 
-export async function updateById(id: string, data: UpdateUser) {
+export async function updateById(id: string, data: UpdateUser, session?: mongoose.ClientSession) {
   try {
     // Check if the user exists
     const user = await findUserById(id);
 
-    return await userRepository.updateById(id, data);
+    return await userRepository.updateById(id, data, session);
   } catch (error) {
     throw error;
   }

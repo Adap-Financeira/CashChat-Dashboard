@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "./models/PaymentMethods"; // Import the PaymentMethods model to register it with Mongoose
-import { statsController } from "./controllers/stats-controller";
 import { authController } from "./controllers/auth-controller";
 import { hotmartController } from "./controllers/hotmart-controller";
 import { transactionController } from "./controllers/transaction-controller";
@@ -20,7 +19,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -28,7 +27,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 authController(app);
-statsController(app);
 transactionController(app);
 colorsController(app);
 categoryController(app);
@@ -50,3 +48,4 @@ app.listen(process.env.PORT || 5001, () =>
 
 // Jobs
 createMonthlyReportJob();
+
