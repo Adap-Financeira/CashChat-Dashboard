@@ -1,6 +1,6 @@
 export async function sendUserInformationToZapier(email: string, name: string, phoneNumber: string) {
   try {
-    await fetch("https://hooks.zapier.com/hooks/catch/23311008/u3amd32/", {
+    await fetch(process.env.ZAPIER_WEBHOOK_URL!, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
