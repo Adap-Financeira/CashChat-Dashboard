@@ -60,7 +60,7 @@ export default async function Home() {
             <BenefitIcon Icon={Banknote} text="Deixe o seu financeiro no automático" />
             <BenefitIcon Icon={CalendarDays} text="Seus compromissos organizados na sua mão" />
           </div>
-          <LandingPageMainButton text="Quero organizar a minha empresa" href="/register" />
+          <LandingPageMainButton text="Quero organizar a minha empresa" href="#plans" />
           <div className="flex flex-col md:flex-row gap-4 justify-center m-auto mt-10">
             <Image
               src={example1}
@@ -80,23 +80,35 @@ export default async function Home() {
             style={{ backgroundImage: `url(${bannerSection.src})` }}
           ></div>
         </section>
-        <section id="how_it_works" className="flex flex-col gap-9 py-12 sm:py-16 bg-white">
-          <FeatureCard {...expenseTrackingFeature} videoPosition="right" />
+        <section id="how_it_works" className="flex flex-col gap-9 py-12 sm:py-16 ">
+          <FeatureCard
+            {...expenseTrackingFeature}
+            videoPosition="right"
+            videoUrl="https://youtu.be/biG0r8RweK4"
+          />
           <Separator />
-          <FeatureCard {...incomeTrackingFeature} videoPosition="left" />
+          <FeatureCard
+            {...incomeTrackingFeature}
+            videoPosition="left"
+            videoUrl="https://youtu.be/khn77u_jAO8"
+          />
           <Separator />
-          <FeatureCard {...appointmentTrackingFeature} videoPosition="right" />
+          <FeatureCard
+            {...appointmentTrackingFeature}
+            videoPosition="right"
+            videoUrl="https://youtu.be/Fu_ZWgNgtiQ"
+          />
           <Separator />
-          <FeatureCard {...analyticsFeature} videoPosition="left" />
+          <FeatureCard {...analyticsFeature} videoPosition="left" videoUrl="https://youtu.be/Sw0TMtL9lbg" />
 
-          <LandingPageMainButton text="Começar agora mesmo" href="/register" />
+          <LandingPageMainButton text="Começar agora mesmo" href="#plans" />
         </section>
-        <section id="feedbacks" className="py-20 bg-white">
+        <section id="feedbacks" className="py-20">
           <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Clientes que <span className="text-green-600">transformaram suas vidas</span> com a ADAP
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="mt-4 text-lg max-w-3xl mx-auto">
               Veja como a ADAP está ajudando pessoas reais a alcançar seus objetivos financeiros.
             </p>
 
@@ -111,10 +123,10 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <section className="py-20 bg-gray-100">
+        <section className="py-20 bg-gray-100 dark:bg-background">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-2xl font-bold uppercase tracking-wide">Números que comprovam</h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="mt-4 text-lg max-w-3xl mx-auto">
               Faça parte da revolução da inteligência artificial e tenha um funcionário lhe ajudando 24 horas
               por dia com a sua vida.
             </p>
@@ -125,11 +137,11 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <section id="plans" className="py-20 bg-gray-100">
+        <section id="plans" className="py-20 bg-gray-100 dark:bg-background">
           <div className="container mx-auto px-6 text-center">
             <h2 className="text-2xl font-bold uppercase">Conheça nossos planos</h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-xl mx-auto">
-              Escolha seu plano e comece a organizar suas finanças hoje.
+            <p className="mt-4 text-lg max-w-xl mx-auto">
+              Escolha seu plano e comece a organizar suas finanças hoje mesmo.
             </p>
             <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto items-center">
               {plans.map((plan, index) => (
@@ -147,14 +159,14 @@ export default async function Home() {
               ))}
             </div>
           </div>
-          <LandingPageMainButton text="Começar agora mesmo" href="/register" />
+          <LandingPageMainButton text="Começar agora mesmo" href="#plans" />
         </section>
-        <section id="support" className="">
+        <section id="support">
           <div className="w-full max-w-3xl mx-auto my-10 px-4">
             <div
               className="
               flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8 
-              bg-white border border-slate-200 rounded-2xl p-6 shadow-sm"
+              bg-background border border-slate-200 rounded-2xl p-6 shadow-sm"
             >
               {/* Left Section: Icon and Text */}
               <div className="flex items-center gap-5 text-center sm:text-left">
@@ -165,9 +177,9 @@ export default async function Home() {
 
                 {/* Text Content */}
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-800">Precisa de ajuda?</h3>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Caso ainda tenha alguma dúvida, chame nosso time no WhatsApp.
+                  <h3 className="text-lg font-semibold ">Precisa de ajuda?</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Tire todas as dúvidas com o nosso time de suporte no whatsapp.
                   </p>
                 </div>
               </div>
@@ -189,20 +201,22 @@ export default async function Home() {
             </div>
           </div>
         </section>
-        <footer className="bg-slate-50 text-slate-700">
+        <footer>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Main Footer Section */}
             <div className="py-16 flex flex-col md:flex-row md:justify-between gap-8">
               {/* Company Info & Socials (4 columns on large screens) */}
-              <div className="">
-                <h2 className="text-xl font-bold text-slate-900">ADAP Financeira</h2>
-                <p className="mt-4 text-slate-600 max-w-sm">Seu melhor assistente sempre ao seu lado.</p>
+              <div>
+                <h2 className="text-xl font-bold">ADAP Financeira</h2>
+                <p className="mt-4 text-muted-foreground max-w-sm">
+                  Seu melhor assistente sempre ao seu lado.
+                </p>
               </div>
 
               {/* Newsletter Signup (4 columns on large screens) */}
-              <div className="">
-                <h3 className="font-semibold text-slate-900 tracking-wide">Fique por dentro das novidades</h3>
-                <p className="mt-4 text-slate-600">
+              <div>
+                <h3 className="font-semibold tracking-wide">Fique por dentro das novidades</h3>
+                <p className="mt-4 text-muted-foreground">
                   Receba as últimas notícias, artigos e recursos em sua caixa de entrada.
                 </p>
                 <form className="mt-4 flex gap-2">
@@ -214,13 +228,13 @@ export default async function Home() {
                     type="email"
                     autoComplete="email"
                     required
-                    className="cursor-not-allowed flex-auto min-w-0 appearance-none rounded-md border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="cursor-not-allowed flex-auto min-w-0 appearance-none rounded-md border border-slate-300 bg-background px-3 py-2 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Digite seu e-mail"
                     disabled
                   />
                   <button
                     type="button"
-                    className="inline-flex flex-none items-center justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                    className="inline-flex flex-none items-center justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-green-600"
                   >
                     <Send className="h-4 w-4" />
                   </button>
@@ -230,14 +244,14 @@ export default async function Home() {
 
             {/* Bottom Bar */}
             <div className="py-8 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-sm">
-              <p className="text-slate-500">
+              <p className="text-muted-foreground">
                 © {new Date().getFullYear()} ADAP Financeira. Todos os direitos reservados.
               </p>
               <div className="flex gap-x-6 mt-4 sm:mt-0">
-                <a href="#" className="hover:text-slate-900 transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   Termos de Serviço
                 </a>
-                <a href="#" className="hover:text-slate-900 transition-colors">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   Política de Privacidade
                 </a>
               </div>

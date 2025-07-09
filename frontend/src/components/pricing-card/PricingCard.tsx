@@ -1,4 +1,5 @@
 import { Check, X } from "lucide-react";
+import Link from "next/link";
 
 interface Feature {
   text: string;
@@ -71,11 +72,12 @@ export default function PricingCard({ plan }: { plan: Plan }) {
         ))}
       </ul>
 
-      <button
+      <Link
+        href="/register"
         className={`w-full mt-10 py-3 rounded-lg transition-transform hover:scale-105 ${buttonClasses}`}
       >
         {plan.ctaText}
-      </button>
+      </Link>
     </div>
   );
 }
