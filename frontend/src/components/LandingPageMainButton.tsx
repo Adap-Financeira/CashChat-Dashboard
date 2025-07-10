@@ -8,7 +8,7 @@ interface LandingPageMainButtonProps {
 
 export default function LandingPageMainButton({ text, href }: LandingPageMainButtonProps) {
   return (
-    <Link href={href || "/"}>
+    <Link href={href || "/"} className="flex w-fit mx-auto">
       <Button className="flex w-fit cursor-pointer mt-4 m-auto px-6 py-7 text-lg font-semibold bg-green-600 hover:bg-green-700 text-white">
         {text}
       </Button>

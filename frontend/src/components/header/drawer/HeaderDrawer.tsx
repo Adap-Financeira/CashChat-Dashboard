@@ -21,7 +21,7 @@ import { useAuth } from "@/context/AuthProvider";
 export default function HeaderDrawer() {
   const path = usePathname();
   const { theme, setTheme } = useTheme();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   return (
     <Drawer direction="left">
       <DrawerTrigger className="lg:hidden">
@@ -47,9 +47,9 @@ export default function HeaderDrawer() {
             </ToggleGroup>
           </div>
           <DrawerTitle>
-            <div className="text-2xl">Guilherme Garcia</div>
+            <div className="text-2xl">{user?.displayName}</div>
           </DrawerTitle>
-          <DrawerDescription>+55 11 99999-9999</DrawerDescription>
+          <DrawerDescription>{user?.phoneNumber}</DrawerDescription>
         </DrawerHeader>
         <nav>
           <ul className="flex flex-col">

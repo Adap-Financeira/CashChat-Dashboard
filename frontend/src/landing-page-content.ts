@@ -88,10 +88,10 @@ export const stats = [
 
 export const plans = [
   {
-    name: "Básico",
+    name: "Mensal",
     subtitle: "Mais barato do que um lanche",
     price: "R$37",
-    period: "ano",
+    period: "mês",
     features: [
       { text: "Lançamentos ilimitados via WhatsApp", included: true },
       { text: "Relatórios detalhados", included: true },

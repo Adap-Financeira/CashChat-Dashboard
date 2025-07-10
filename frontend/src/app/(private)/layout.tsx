@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
+import WhatsappButton from "@/components/whatsapp-button/WhatsappButton";
 
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -37,6 +38,7 @@ export default function PrivateLayout({ children }: { children: React.ReactNode 
     <div className="flex flex-col min-h-screen w-full">
       <Header />
       <div className="py-18 px-[var(--padding)] lg:py-22">{children}</div>
+      <WhatsappButton />
     </div>
   );
 }

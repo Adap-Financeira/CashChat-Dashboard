@@ -12,9 +12,15 @@ Categories
 User
 
 - [x] Check user id in all transactions, categories and reminders.
-- [ ] If some user already has the registry in mongodb, then check the phone number and if it is the same, then update the user.
-      Se o usuário já tiver acesso ao chatbot e quiser criar uma conta para o dashboard com email, senha, etc.. e já tiver um registro no mongodb, então precisamos verificar se o número de telefone é o mesmo para atualizarmos um registro existente e criarmos a conta dele.
-- [ ] Think about some way to have linked accounts for multiple users.
+- [x] If some user already has the registry in mongodb, then check the phone number and if it is the same, then update the user.
+- [ ] name
+- [ ] email
+- [ ] phoneNumber (whatsapp)
+- [ ] documentType (CPF/CNPJ)
+- [ ] documentNumber
+- [ ] segment (segmento da empresa)
+- [ ] mainActivity (atividade principal)
+- [ ] password
 
 Reports
 
@@ -25,3 +31,8 @@ Reports
 - [x] Create a repository function to create the monthly report.
 - [x] Create a controller function to get the monthly report.
 - [x] Create a job to create the monthly report.
+
+Others
+
+- [x] Create an .env var to set the frontend url in cors.
+- [x] Create a function to send the user information in registration in the zapier webhook.

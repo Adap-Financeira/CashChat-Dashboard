@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthProvider";
 import { FirebaseError } from "firebase/app";
 import { toast } from "sonner";
+import Logo from "@/components/logo/Logo";
 
 interface FormErrors {
   email: string | undefined;
@@ -91,24 +92,20 @@ export default function Login() {
             alt="Imagem de login"
             className="w-full h-full object-fit rounded-[12px]"
           /> */}
-          <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]"></div>
+          <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]" />
         </div>
 
         <div className="flex flex-col items-center md:w-1/2 h-full justify-center">
           <div className="flex flex-col justify-center max-w-[320px] w-full">
             <div className="flex flex-col max-w-[120px] mb-3">
-              {/* <img src="/Logo.png" alt="Logo" /> */}
-              <h1>LOGO</h1>
+              <Logo />
             </div>
 
             <div className="flex flex-col">
               <form onSubmit={handleSubmit} className="flex flex-col justify-center">
                 <div className="flex flex-col gap-[12px] mb-5">
                   <h2 className="text-lg font-bold">Bem-vindo de volta!</h2>
-                  <div>
-                    <p className="text-md">Encontre parceiros para treinar ao ar livre.</p>
-                    <p className="text-md">Conecte-se e comece agora! 💪</p>
-                  </div>
+                  <p className="text-md">Organize suas finanças de maneira mais completa e profissional.</p>
                 </div>
 
                 <div className="flex flex-col gap-[16px]">

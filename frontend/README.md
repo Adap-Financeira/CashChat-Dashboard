@@ -11,6 +11,7 @@ TODO:
 * [x] Get the transactions (Line chart) data from the backend
 * [x] Get the categories (Doughnut chart) data from the backend
 * [x] Create some messages to hide charts when no data is available
+* [x] Add logo in the dashboard
 
 - Reminders
 
@@ -41,5 +42,3 @@ TODO:
 
 * [x] Create a error page
 * [x] Create whatsapp button to redirect user to whatsapp of adap
-
-![alt text](image.png)

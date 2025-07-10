@@ -33,18 +33,18 @@ export default function FeatureCard({
           <div className={`flex flex-col justify-center ${textOrderClass}`}>
             <div className="flex items-center gap-4 mb-6">
               <Icon className="w-8 h-8 md:w-12 md:h-12 text-green-600" />
-              <h2 className="text-2xl font-bold text-gray-800 tracking-tight">{title}</h2>
+              <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-4">{description}</p>
+            <p className="leading-relaxed mb-4">{description}</p>
 
-            <p className="text-gray-600 leading-relaxed mb-8">{subDescription}</p>
+            <p className="leading-relaxed mb-8">{subDescription}</p>
 
             <ul className="space-y-4">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-start">
                   <Check className="w-6 h-6 text-green-500 mr-3 mt-1 flex-shrink-0" />
-                  <span className="text-gray-700 text-sm">{feature}</span>
+                  <span className="text-muted-foreground text-sm">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -56,7 +56,7 @@ export default function FeatureCard({
               videoPosition === "left" ? "md:justify-start" : "md:justify-end"
             } ${videoOrderClass}`}
           >
-            <FeatureCardVideoPlayer videoUrl={"https://www.youtube.com/watch?v=-YPYfMF7800"} />
+            <FeatureCardVideoPlayer videoUrl={videoUrl} />
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import FormPasswordInput from "@/components/form-components/FormPasswordInput";
 import FormPhoneInput from "@/components/form-components/FormPhoneInput";
 import { register } from "@/api/auth";
 import { CustomError } from "@/utils/custom-error";
+import Logo from "@/components/logo/Logo";
 
 export default function Register() {
   const [pending, setPending] = useState(false);
@@ -31,15 +32,11 @@ export default function Register() {
 
   async function onSubmit(data: RegisterSchemaType) {
     try {
-      console.log(data);
-
       const response = await register(data);
-      console.log(response);
 
       toast.success(response.message);
-      router.push("/login");
+      router.push("/thank-you");
     } catch (error) {
-      console.log(error);
       if (error instanceof CustomError) {
         toast.error(error.message);
       }
@@ -49,22 +46,16 @@ export default function Register() {
   }
 
   return (
-    <div className="flex items-center justify-center relative">
+    <div className="flex items-center justify-center relative h-screen overflow-hidden">
       <ThemeButton className="absolute top-4 right-4" />
       <div className="flex items-center justify-center max-w-[1440px] w-full h-screen">
         <div className="hidden w-1/2 h-full overflow-hidden md:flex">
-          {/* <img
-            src="/login.png"
-            alt="Imagem de login"
-            className="w-full h-full object-fit rounded-[12px]"
-          /> */}
-          <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]"></div>
+          <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]" />
         </div>
 
-        <div className="flex flex-col justify-center max-w-[320px] w-full py-10 m-auto">
+        <div className="flex flex-col justify-center max-w-[320px] w-full py-5 m-auto">
           <div className="flex flex-col max-w-[120px]">
-            {/* <img src="/Logo.png" alt="Logo" /> */}
-            <h1>LOGO</h1>
+            <Logo />
           </div>
 
           <div className="flex flex-col">
@@ -72,10 +63,10 @@ export default function Register() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col justify-center">
                 <div className="flex flex-col gap-[12px]">
                   <h2 className="text-lg font-bold">Crie sua conta!</h2>
-                  <div>
-                    <p className="text-md">Encontre parceiros para treinar ao ar livre.</p>
-                    <p className="text-md">Conecte-se e comece agora! 💪</p>
-                  </div>
+                  <p className="text-md">
+                    Garanta já seu teste gratuito de 7 dias para aproveitar o melhor assistente financeiro do
+                    mercado.
+                  </p>
                 </div>
 
                 <div className="flex flex-col gap-[16px] mt-6">
