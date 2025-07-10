@@ -13,14 +13,14 @@ User
 
 - [x] Check user id in all transactions, categories and reminders.
 - [x] If some user already has the registry in mongodb, then check the phone number and if it is the same, then update the user.
-- [ ] name
-- [ ] email
-- [ ] phoneNumber (whatsapp)
+- [x] name
+- [x] email
+- [x] phoneNumber (whatsapp)
 - [ ] documentType (CPF/CNPJ)
 - [ ] documentNumber
 - [ ] segment (segmento da empresa)
 - [ ] mainActivity (atividade principal)
-- [ ] password
+- [x] password
 
 Reports
 
