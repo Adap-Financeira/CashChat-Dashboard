@@ -34,8 +34,10 @@ export default function Register() {
     try {
       const response = await register(data);
 
-      toast.success(response.message);
-      router.push("/thank-you");
+      if (response.success) {
+        toast.success(response.message);
+        router.push("/thank-you");
+      }
     } catch (error) {
       if (error instanceof CustomError) {
         toast.error(error.message);

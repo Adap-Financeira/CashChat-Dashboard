@@ -1,5 +1,6 @@
 "use server";
 import { RegisterSchemaType } from "@/schemas/schemas";
+import { CustomError } from "@/utils/custom-error";
 
 export async function register(data: RegisterSchemaType) {
   try {
@@ -13,7 +14,12 @@ export async function register(data: RegisterSchemaType) {
     });
 
     const result = await response.json();
-    return result;
+
+    if (response.status !== 200) {
+      throw new CustomError(result.message, response.status);
+    }
+
+    return { success: true, message: result.message };
   } catch (error) {
     throw error;
   }
