@@ -22,7 +22,7 @@ export default function InputPassword({ control, name, label, placeholder }: For
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <div className="relative">
+            <div className="relative h-10">
               <Input
                 placeholder={placeholder}
                 {...field}

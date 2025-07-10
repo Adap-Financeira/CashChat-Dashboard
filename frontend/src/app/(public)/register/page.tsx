@@ -13,11 +13,10 @@ import { Form } from "@/components/ui/form";
 import FormPasswordInput from "@/components/form-components/FormPasswordInput";
 import FormPhoneInput from "@/components/form-components/FormPhoneInput";
 import { register } from "@/api/auth";
-import { CustomError } from "@/utils/custom-error";
 import Logo from "@/components/logo/Logo";
 
 export default function Register() {
-  const [pending, setPending] = useState(false);
+  const [pending] = useState(false);
   const router = useRouter();
 
   const form = useForm<RegisterSchemaType>({
@@ -37,25 +36,27 @@ export default function Register() {
       if (response.success) {
         toast.success(response.message);
         router.push("/thank-you");
+      } else {
+        toast.error(response.message);
       }
-    } catch (error) {
-      if (error instanceof CustomError) {
-        toast.error(error.message);
-      }
-
+    } catch (error: any) {
       toast.error("Erro ao realizar cadastro");
     }
   }
 
   return (
-    <div className="flex items-center justify-center relative h-screen overflow-hidden">
-      <ThemeButton className="absolute top-4 right-4" />
-      <div className="flex items-center justify-center max-w-[1440px] w-full h-screen">
-        <div className="hidden w-1/2 h-full overflow-hidden md:flex">
-          <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]" />
-        </div>
+    <div className="flex min-h-screen">
+      {/* ===== Left Column (Visuals) ===== */}
+      <div className="hidden md:block md:w-1/2 h-screen sticky top-0">
+        <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]" />
+      </div>
 
-        <div className="flex flex-col justify-center max-w-[320px] w-full py-5 m-auto">
+      {/* ===== Right Column (Form) ===== */}
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center min-h-screen relative py-12 px-4">
+        <ThemeButton className="absolute top-4 right-4" />
+
+        {/* Your original form container, it fits perfectly inside the right column now. */}
+        <div className="flex flex-col justify-center max-w-[320px] w-full">
           <div className="flex flex-col max-w-[120px]">
             <Logo />
           </div>

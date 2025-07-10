@@ -16,11 +16,11 @@ export async function register(data: RegisterSchemaType) {
     const result = await response.json();
 
     if (response.status !== 200) {
-      throw new CustomError(result.message, response.status);
+      return { success: false, message: result.message };
     }
 
     return { success: true, message: result.message };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }
