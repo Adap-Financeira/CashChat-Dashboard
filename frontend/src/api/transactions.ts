@@ -1,12 +1,13 @@
 "use server";
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 import { revalidateTag } from "next/cache";
 import { CreateTransactionType, DeleteTransactionType, UpdateTransactionType } from "./types/transactions";
 import { Transaction } from "@/types/transaction";
 
 export async function getTransactions(from: string, to: string) {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/transaction/all?from=${from}&to=${to}`,
       {
@@ -35,7 +36,8 @@ export async function getTransactions(from: string, to: string) {
 
 export async function createTransaction(transaction: CreateTransactionType) {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transaction/create`, {
       method: "POST",
       headers: {
@@ -60,7 +62,8 @@ export async function createTransaction(transaction: CreateTransactionType) {
 
 export async function updateTransaction(transaction: UpdateTransactionType) {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transaction/update`, {
       method: "PUT",
       headers: {
@@ -85,7 +88,8 @@ export async function updateTransaction(transaction: UpdateTransactionType) {
 
 export async function deleteTransaction({ id }: DeleteTransactionType) {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transaction/delete`, {
       method: "DELETE",
       headers: {

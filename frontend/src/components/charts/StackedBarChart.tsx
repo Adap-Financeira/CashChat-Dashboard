@@ -22,6 +22,7 @@ export const options = {
       text: "Gráfico de Transações Mensais",
     },
   },
+  maintainAspectRatio: false,
   responsive: true,
   scales: {
     x: {

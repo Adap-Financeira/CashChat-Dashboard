@@ -17,13 +17,15 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useAuth } from "@/context/AuthProvider";
+import { useState } from "react";
 
 export default function HeaderDrawer() {
+  const [open, setOpen] = useState(false);
   const path = usePathname();
   const { theme, setTheme } = useTheme();
   const { user, logout } = useAuth();
   return (
-    <Drawer direction="left">
+    <Drawer direction="left" open={open} onOpenChange={setOpen}>
       <DrawerTrigger className="lg:hidden">
         <Menu />
       </DrawerTrigger>
@@ -57,6 +59,7 @@ export default function HeaderDrawer() {
               <HeaderDrawerNavButton
                 label="Dashboard"
                 href="/dashboard"
+                setOpen={setOpen}
                 icon={<ChartArea className="w-6 h-6" />}
                 selected={path === "/dashboard"}
               />
@@ -65,6 +68,7 @@ export default function HeaderDrawer() {
               <HeaderDrawerNavButton
                 label="Transações"
                 href="/transactions"
+                setOpen={setOpen}
                 icon={<BadgeDollarSign className="w-6 h-6" />}
                 selected={path === "/transactions"}
               />
@@ -73,6 +77,7 @@ export default function HeaderDrawer() {
               <HeaderDrawerNavButton
                 label="Lembretes"
                 href="/reminders"
+                setOpen={setOpen}
                 icon={<Timer className="w-6 h-6" />}
                 selected={path === "/reminders"}
               />
@@ -81,6 +86,7 @@ export default function HeaderDrawer() {
               <HeaderDrawerNavButton
                 label="Categorias"
                 href="/categories"
+                setOpen={setOpen}
                 icon={<List className="w-6 h-6" />}
                 selected={path === "/categories"}
               />
@@ -110,11 +116,12 @@ interface HeaderDrawerNavButtonProps {
   href: string;
   icon: React.ReactNode;
   selected?: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-function HeaderDrawerNavButton({ label, href, icon, selected = false }: HeaderDrawerNavButtonProps) {
+function HeaderDrawerNavButton({ label, href, icon, selected = false, setOpen }: HeaderDrawerNavButtonProps) {
   return (
-    <Link href={href} className="flex grow relative">
+    <Link href={href} className="flex grow relative" onClick={() => setOpen(false)}>
       <div
         className={`flex items-center justify-start gap-4 p-4 w-full cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 ${
           selected && "text-muted-foreground"

@@ -1,10 +1,10 @@
 "use server";
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 import { MonthlyReport } from "@/types/reports";
 
 export async function getYearlySummary(year: string) {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/reports/monthly-reports?year=${year}`,
       {

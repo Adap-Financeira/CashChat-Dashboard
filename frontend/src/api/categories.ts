@@ -1,12 +1,12 @@
 "use server";
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 import { Category } from "@/types/category";
 import { CustomError } from "@/utils/custom-error";
 import { revalidateTag } from "next/cache";
 
 export async function getCategories(): Promise<Category[]> {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/all`, {
       method: "GET",
       headers: {
@@ -39,7 +39,7 @@ export async function createCategory(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${await getRequiredCookie()};`,
       },
       body: JSON.stringify({ name, color }),
       cache: "no-store",
@@ -68,7 +68,7 @@ export async function updateCategory(
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${await getRequiredCookie()};`,
       },
       body: JSON.stringify({ name, color, categoryId }),
       cache: "no-store",
@@ -93,7 +93,7 @@ export async function deleteCategory(categoryId: string): Promise<{ message: str
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${await getRequiredCookie()};`,
       },
       body: JSON.stringify({ categoryId }),
       cache: "no-store",

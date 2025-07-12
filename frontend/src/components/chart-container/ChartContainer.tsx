@@ -9,7 +9,7 @@ interface ChartContainerProps {
 export function ChartContainer({ title, isDataEmpty, children }: ChartContainerProps) {
   return (
     // Here is our single source of truth for styling
-    <div className="w-full lg:w-1/2 border p-4 flex items-center justify-center relative aspect-video min-h-[300px]">
+    <div className="w-full lg:w-1/2 border p-4 flex items-center justify-center relative h-80 lg:h-96">
       {isDataEmpty ? (
         // Centralized empty state message
         <div className="text-center">

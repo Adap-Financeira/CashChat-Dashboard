@@ -1,4 +1,4 @@
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 
 export async function getColors(): Promise<
   {
@@ -8,7 +8,7 @@ export async function getColors(): Promise<
   }[]
 > {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/colors/all`, {
       method: "GET",
       headers: {
