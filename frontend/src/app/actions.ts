@@ -18,6 +18,19 @@ export async function removeCookie(name: string) {
 }
 
 export async function getCookie(name: string) {
-  return (await cookies()).get(name)?.value ?? "";
+  return (await cookies()).get(name)?.value;
 }
 
+/**
+ * Retrieves a required cookie and throws an error if it's not found.
+ * @returns The cookie value.
+ */
+export async function getRequiredCookie() {
+  const token = await getCookie("token");
+
+  if (!token) {
+    throw new Error("Authentication token not found.");
+  }
+
+  return token;
+}

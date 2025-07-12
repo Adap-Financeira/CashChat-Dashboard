@@ -36,3 +36,8 @@ Others
 
 - [x] Create an .env var to set the frontend url in cors.
 - [x] Create a function to send the user information in registration in the zapier webhook.
+
+Fixes
+
+- [x] Fix the size of charts to small screens.
+- [x] Fix the error in payment methods request to show the correct data.

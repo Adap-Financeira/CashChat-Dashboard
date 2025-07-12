@@ -16,6 +16,7 @@ import { ChartContainer } from "../chart-container/ChartContainer";
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export const options = {
+  maintainAspectRatio: false,
   responsive: true,
   plugins: {
     legend: {

@@ -5,7 +5,10 @@ import whatsappIcon from "@/assets/whatsapp.svg";
 
 export default function WhatsappButton() {
   const handleClick = () => {
-    window.open("https://wa.me/+5512992444308", "_blank");
+    window.open(
+      "https://wa.me/5555992217140?text=Ol%C3%A1%2C%20tenho%20uma%20d%C3%BAvida%2C%20pode%20me%20ajudar%3F",
+      "_blank"
+    );
   };
 
   return (

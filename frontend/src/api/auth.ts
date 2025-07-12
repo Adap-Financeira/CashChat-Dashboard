@@ -1,6 +1,5 @@
 "use server";
 import { RegisterSchemaType } from "@/schemas/schemas";
-import { CustomError } from "@/utils/custom-error";
 
 export async function register(data: RegisterSchemaType) {
   try {

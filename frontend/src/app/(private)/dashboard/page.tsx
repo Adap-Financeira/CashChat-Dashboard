@@ -49,10 +49,10 @@ export default async function Dashboard({
     .reduce((acc: number, transaction: any) => acc + transaction.amount, 0);
 
   return (
-    <div className="flex flex-col gap-5 max-h-screen">
+    <div className="flex flex-col gap-5 max-h-screen mt-5 lg:mt-0">
       <DateFilter from={startObj} to={endObj} />
       <div className="flex flex-col gap-5">
-        <div className="flex flex-wrap gap-5">
+        <div className="flex flex-wrap gap-5 px-1">
           <TransactionCard
             type="income"
             amount={incomeAmount}

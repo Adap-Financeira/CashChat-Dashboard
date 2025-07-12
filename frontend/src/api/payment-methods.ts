@@ -1,4 +1,4 @@
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 
 export async function getPaymentMethods(): Promise<
   {
@@ -7,7 +7,7 @@ export async function getPaymentMethods(): Promise<
   }[]
 > {
   try {
-    const token = await getCookie("token");
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/payment-methods/all`, {
       method: "GET",
       headers: {

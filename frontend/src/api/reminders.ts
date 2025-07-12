@@ -1,17 +1,18 @@
 "use server";
-import { getCookie } from "@/app/actions";
+import { getRequiredCookie } from "@/app/actions";
 import { CustomError } from "@/utils/custom-error";
 import { revalidateTag } from "next/cache";
 
 export async function getReminders(limit?: number) {
   try {
+    const token = await getRequiredCookie();
     const reminders = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/reminders/all${limit ? `?limit=${limit}` : ""}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Cookie: `token=${await getCookie("token")};`,
+          Cookie: `token=${token};`,
         },
         credentials: "include",
         next: {
@@ -32,11 +33,12 @@ export async function createReminder(
   date: Date
 ): Promise<{ message: string } | CustomError> {
   try {
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reminders/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${token};`,
       },
       body: JSON.stringify({ description, date }),
       cache: "no-store",
@@ -61,11 +63,12 @@ export async function updateReminder(
   reminderId: string
 ): Promise<{ message: string } | CustomError> {
   try {
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reminders/update`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${token};`,
       },
       body: JSON.stringify({ description, date, reminderId }),
       cache: "no-store",
@@ -86,11 +89,12 @@ export async function updateReminder(
 
 export async function deleteReminder(reminderId: string): Promise<{ message: string } | CustomError> {
   try {
+    const token = await getRequiredCookie();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reminders/delete`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${await getCookie("token")};`,
+        Cookie: `token=${token};`,
       },
       body: JSON.stringify({ reminderId }),
       cache: "no-store",

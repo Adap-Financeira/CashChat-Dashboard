@@ -26,7 +26,7 @@ export default async function Transactions({
   const transactions = await getTransactions(startDate, endDate);
 
   return (
-    <div className="flex flex-col gap-5 max-h-screen">
+    <div className="flex flex-col gap-5 max-h-screen mt-5 lg:mt-0">
       <DateFilter from={startObj} to={endObj} />
       <div className="flex flex-col gap-5">
         <div>
