@@ -10,7 +10,6 @@ import { BenefitIcon } from "@/components/benefit-icon/BenefitIcon";
 import FeatureCard from "@/components/feature-card/FeatureCard";
 import StatCard from "@/components/stat-card/StatCard";
 import { Separator } from "@/components/ui/separator";
-import FeedbackCard from "@/components/feedback-card/FeedbackCard";
 import PricingCard from "@/components/pricing-card/PricingCard";
 import FaqAccordion from "@/components/faq-accordion/FaqAccordion";
 import LandingPageMainButton from "@/components/LandingPageMainButton";
@@ -19,11 +18,13 @@ import {
   incomeTrackingFeature,
   appointmentTrackingFeature,
   analyticsFeature,
-  testimonials,
   stats,
   plans,
   faqItems,
 } from "@/landing-page-content";
+import GoodFeedBack1 from "@/assets/goodFeedback1.png";
+import GoodFeedBack2 from "@/assets/goodFeedback2.png";
+import SmartphonePlayer from "@/components/VideoPlayer";
 
 export default async function Home() {
   return (
@@ -55,7 +56,7 @@ export default async function Home() {
             Cansado de planilha e de se sentir perdido? Quer organizar as finanças direto pelo WhatsApp, de
             forma simples e automática.{" "}
           </h1>
-          <div id="features" className="flex flex-wrap gap-4 justify-center mt-5">
+          <div id="features" className="flex flex-wrap gap-4 justify-center items-center mt-5">
             <BenefitIcon Icon={Lock} text="Segurança dos seus dados em primeiro lugar" />
             <BenefitIcon Icon={Banknote} text="Deixe o seu financeiro no automático" />
             <BenefitIcon Icon={CalendarDays} text="Seus compromissos organizados na sua mão" />
@@ -65,12 +66,15 @@ export default async function Home() {
             <Image
               src={example1}
               alt="Exemplo funcionamento de compromissos."
-              className="w-3xs md:w-1/3 max-w-[500px]"
+              className="w-3xs md:w-1/3 max-w-[500px] mx-auto"
             />
+
+            <SmartphonePlayer videoUrl="https://youtube.com/shorts/VceisoBYmHc" />
+
             <Image
               src={example2}
               alt="Exemplo funcionamento de compromissos."
-              className="w-3xs md:w-1/3 max-w-[500px]"
+              className="w-3xs md:w-1/3 max-w-[500px] mx-auto"
             />
           </div>
         </section>
@@ -104,7 +108,7 @@ export default async function Home() {
           <LandingPageMainButton text="Começar agora mesmo" href="#plans" />
         </section>
         <section id="feedbacks" className="py-20">
-          <div className="container mx-auto px-6 text-center">
+          <div className="flex flex-col gap-4 mx-auto px-6 text-center">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Clientes que <span className="text-green-600">transformaram suas vidas</span> com a ADAP
             </h2>
@@ -112,14 +116,37 @@ export default async function Home() {
               Veja como a ADAP está ajudando pessoas reais a alcançar seus objetivos financeiros.
             </p>
 
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 justify-center">
-              {testimonials.map((testimonial) => (
-                <FeedbackCard
-                  key={testimonial.id}
-                  imgSrc={testimonial.imgSrc.src}
-                  altText={testimonial.altText}
-                />
-              ))}
+            {/* <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 justify-center">
+              <FeedbackCard
+                type={"image"}
+                imgSrc={GoodFeedBack1.src}
+                altText={"Feedback positivo de cliente da ADAP sobre o produto"}
+              />
+              <FeedbackCard
+                type={"video"}
+                videoUrl="https://youtube.com/shorts/eXaDWTBgNzU"
+                altText={"Depoimento de cliente Lucas Nazaro sobre o suporte da ADAP"}
+              />
+              <FeedbackCard
+                type={"image"}
+                imgSrc={GoodFeedBack2.src}
+                altText={"Feedback positivo de cliente da ADAP sobre o produto"}
+              />
+            </div> */}
+            <div className="flex flex-col md:flex-row gap-4 justify-center m-auto mt-10">
+              <Image
+                src={GoodFeedBack1}
+                alt="Feedback positivo de cliente da ADAP sobre o produto"
+                className="w-3xs md:w-1/3 max-w-[500px]"
+              />
+
+              <SmartphonePlayer videoUrl="https://youtube.com/shorts/eXaDWTBgNzU" />
+
+              <Image
+                src={GoodFeedBack2}
+                alt="Feedback positivo de cliente da ADAP sobre o produto."
+                className="w-3xs md:w-1/3 max-w-[500px]"
+              />
             </div>
           </div>
         </section>
@@ -143,7 +170,7 @@ export default async function Home() {
             <p className="mt-4 text-lg max-w-xl mx-auto">
               Escolha seu plano e comece a organizar suas finanças hoje mesmo.
             </p>
-            <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 mt-16 gap-12 max-w-4xl mx-auto">
               {plans.map((plan, index) => (
                 <PricingCard key={index} plan={plan} />
               ))}
@@ -201,6 +228,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
+        <Separator />
         <footer>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Main Footer Section */}

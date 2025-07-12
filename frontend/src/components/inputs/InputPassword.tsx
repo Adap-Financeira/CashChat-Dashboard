@@ -24,9 +24,9 @@ export default function InputPassword({ label, error, ...props }: InputPasswordP
         onClick={() => setIsView((prev) => !prev)}
       >
         {isView ? (
-          <Eye className="absolute right-4 top-10 z-10 cursor-pointer text-gray-500" />
+          <Eye className="absolute right-4 top-11 z-10 cursor-pointer text-muted-foreground w-4 h-4" />
         ) : (
-          <EyeOff className="absolute right-4 top-10 z-10 cursor-pointer text-gray-500" />
+          <EyeOff className="absolute right-4 top-11 z-10 cursor-pointer text-muted-foreground w-4 h-4" />
         )}
       </button>
     </div>

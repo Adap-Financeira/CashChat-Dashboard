@@ -87,11 +87,6 @@ export default function Login() {
       <ThemeButton className="absolute top-4 right-4" />
       <div className="flex items-center justify-center max-w-[1440px] w-full h-screen">
         <div className="hidden w-1/2 h-full overflow-hidden md:flex">
-          {/* <img
-            src="/login.png"
-            alt="Imagem de login"
-            className="w-full h-full object-fit rounded-[12px]"
-          /> */}
           <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]" />
         </div>
 
@@ -104,7 +99,7 @@ export default function Login() {
             <div className="flex flex-col">
               <form onSubmit={handleSubmit} className="flex flex-col justify-center">
                 <div className="flex flex-col gap-[12px] mb-5">
-                  <h2 className="text-lg font-bold">Bem-vindo de volta!</h2>
+                  <h2 className="text-lg font-bold text-green-600">Bem-vindo de volta!</h2>
                   <p className="text-md">Organize suas finanças de maneira mais completa e profissional.</p>
                 </div>
 
@@ -139,7 +134,7 @@ export default function Login() {
 
                 <Button
                   type="submit"
-                  className="w-full h-[48px] cursor-pointer mt-5 disabled:opacity-50"
+                  className="w-full h-[40px] cursor-pointer mt-5 disabled:opacity-50 bg-green-600 hover:bg-green-700"
                   disabled={pending}
                 >
                   Entrar
@@ -148,7 +143,7 @@ export default function Login() {
 
               <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
                 <p>Ainda não tem uma conta?</p>
-                <Link href="/register" className="font-bold text-primary">
+                <Link href="/register" className="font-bold text-green-600 hover:underline">
                   Cadastre-se
                 </Link>
               </div>

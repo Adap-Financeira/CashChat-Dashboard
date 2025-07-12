@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { resetPasswordSchema } from "@/schemas/schemas";
 import { useAuth } from "@/context/AuthProvider";
+import Logo from "@/components/logo/Logo";
 
 interface FormErrors {
   email: string | undefined;
@@ -55,24 +56,18 @@ export default function ResetPassword() {
       <ThemeButton className="absolute top-4 right-4" />
       <div className="flex items-center justify-center max-w-[1440px] w-full h-screen">
         <div className="hidden w-1/2 h-full overflow-hidden md:flex">
-          {/* <img
-            src="/login.png"
-            alt="Imagem de login"
-            className="w-full h-full object-fit rounded-[12px]"
-          /> */}
           <div className="w-full h-full bg-radial from-[#ffffff]/10 to-[#000000]"></div>
         </div>
 
         <div className="flex flex-col justify-center max-w-[320px] w-full py-10 m-auto">
           <div className="flex flex-col max-w-[120px]">
-            {/* <img src="/Logo.png" alt="Logo" /> */}
-            <h1>LOGO</h1>
+            <Logo />
           </div>
 
           <div className="flex flex-col">
             <form onSubmit={handleSubmit} className="flex flex-col justify-center">
               <div className="flex flex-col gap-[12px]">
-                <h2 className="text-lg font-bold">Esqueceu sua senha?</h2>
+                <h2 className="text-lg font-bold text-green-600">Esqueceu sua senha?</h2>
                 <div>
                   <p className="text-md">
                     Não se preocupe! Basta digitar seu email e enviaremos um link para redefinir sua senha.
@@ -92,14 +87,17 @@ export default function ResetPassword() {
                 />
               </div>
 
-              <Button className="w-full h-[48px] cursor-pointer mt-6" disabled={pending}>
+              <Button
+                className="w-full h-[40px] cursor-pointer mt-6 bg-green-600 hover:bg-green-700"
+                disabled={pending}
+              >
                 Resetar senha
               </Button>
             </form>
 
             <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
               <p>Quer voltar para o login?</p>
-              <Link href="/login" className="font-bold text-primary">
+              <Link href="/login" className="font-bold text-green-600 hover:underline">
                 Clique aqui
               </Link>
             </div>
