@@ -10,19 +10,15 @@ export default function FeatureCardVideoPlayer({ videoUrl }: FeatureCardVideoPla
   return (
     <div className="relative w-full max-w-lg aspect-video bg-slate-900 rounded-2xl shadow-2xl overflow-hidden group">
       {/* This div simulates the WhatsApp UI background */}
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-20"
-        style={{
-          backgroundImage: "url('https://www.transparenttextures.com/patterns/dark-matter.png')",
-        }}
-      ></div>
+      <div className="absolute inset-0 bg-cover bg-center opacity-20"></div>
 
       {!isVideoPlaying && (
         <div
           className="absolute inset-0 flex flex-col items-center justify-center bg-opacity-40 bg-no-repeat bg-contain"
           style={{
-            backgroundImage:
-              "url('https://images.converteai.net/d2ec1a7a-c48a-4116-a136-5da85575b45e/players/682f9b38fad04d102b3622ba/thumbnail.jpg')",
+            backgroundImage: `url('http://img.youtube.com/vi/${
+              videoUrl?.split("be/")[1]
+            }/maxresdefault.jpg')`,
           }}
         >
           <div className="relative flex flex-col items-center justify-center">

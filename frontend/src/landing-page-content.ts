@@ -55,19 +55,6 @@ export const analyticsFeature = {
   ],
 };
 
-export const testimonials = [
-  {
-    id: 1,
-    imgSrc: GoodFeedback1,
-    altText: "Feedback positivo de cliente da ADAP sobre o produto",
-  },
-  {
-    id: 2,
-    imgSrc: GoodFeedback2,
-    altText: "Depoimento de cliente Lucas Nazaro sobre o suporte da ADAP",
-  },
-];
-
 export const stats = [
   {
     Icon: Users,
@@ -88,37 +75,33 @@ export const stats = [
 
 export const plans = [
   {
-    name: "Mensal",
-    subtitle: "Mais barato do que um lanche",
-    price: "R$37",
+    name: "Plano Mensal",
+    subtitle: "Cancele quando quiser",
+    price: "R$39,90",
     period: "mês",
     features: [
-      { text: "Lançamentos ilimitados via WhatsApp", included: true },
-      { text: "Relatórios detalhados", included: true },
-      { text: "Suporte 24h", included: true },
-      { text: "Lembretes de compromissos", included: true },
-      { text: "Receba resumo da sua semana", included: true },
-      { text: "Categorização com I.A.", included: false },
-      { text: "Dicas de como economizar", included: false },
+      { text: "Seu dinheiro organizado no piloto automático.", included: true },
+      { text: "Liberte-se das planilhas complicadas para sempre.", included: true },
+      { text: `Tome decisões baseadas em dados, não em "achismos".`, included: true },
+      { text: "Descubra para onde seu dinheiro está indo.", included: true },
+      { text: "Suporte especializado para te ajudar.", included: true },
     ],
-    ctaText: "EU QUERO COMEÇAR AGORA",
+    ctaText: "Iniciar meu teste grátis.",
   },
   {
-    name: "Plus",
-    subtitle: "Economize 25%",
-    price: "R$7,99",
+    name: "Plano anual",
+    subtitle: "Menos do que um café por dia",
+    price: "R$29,90",
     period: "mês",
     isPopular: true,
     features: [
-      { text: "Lançamentos ilimitados via WhatsApp", included: true },
-      { text: "Relatórios detalhados", included: true },
-      { text: "Suporte 24h", included: true },
-      { text: "Lembretes de compromissos", included: true },
-      { text: "Receba resumo da sua semana", included: true },
-      { text: "Categorização com I.A.", included: true },
-      { text: "Dicas de como economizar", included: true },
+      { text: "Tudo do plano mensal", included: true },
+      { text: "Novas funções Antecipadas", included: true },
+      { text: "Comunidade Exclusiva", included: true },
+      { text: "Bônus exclusivo 01", included: true },
+      { text: "Bônus exclusivo 02", included: true },
     ],
-    ctaText: "EU QUERO APROVEITAR AGORA",
+    ctaText: "Iniciar meu teste grátis.",
   },
 ];
 
