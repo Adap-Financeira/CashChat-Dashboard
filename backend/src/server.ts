@@ -7,7 +7,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import "./models/PaymentMethods"; // Import the PaymentMethods model to register it with Mongoose
 import { authController } from "./controllers/auth-controller";
-import { hotmartController } from "./controllers/hotmart-controller";
+// import { hotmartController } from "./controllers/hotmart-controller";
 import { transactionController } from "./controllers/transaction-controller";
 import { colorsController } from "./controllers/colors-controller";
 import { categoryController } from "./controllers/category-controller";
@@ -32,7 +32,7 @@ colorsController(app);
 categoryController(app);
 remindersController(app);
 paymentMethodController(app);
-hotmartController(app);
+// hotmartController(app);
 reportsController(app);
 
 const dbName = process.env.NODE_ENV === "prod" ? "prod" : "test";
