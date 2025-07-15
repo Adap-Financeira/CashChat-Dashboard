@@ -11,9 +11,9 @@ export function authController(server: Express) {
   // This endpoint is used to create a new user in mongodb with permissions
   authRouter.post("/register", validateRequestBody(RegisterSchema), async (req: Request, res: Response) => {
     try {
-      const { email, name, phoneNumber, password } = RegisterSchema.parse(req.body);
+      const data = RegisterSchema.parse(req.body);
 
-      await registerDashboard({ email, name, phoneNumber, password });
+      await registerDashboard(data);
 
       res.status(200).json({ message: "Usuário criado com sucesso." });
     } catch (error) {

@@ -11,7 +11,11 @@ export default function validateRequestBody(schema: ZodSchema) {
       if (error instanceof ZodError) {
         console.log(error.flatten().fieldErrors);
       }
-      response.status(400).json({ error: "Informe os campos obrigatórios corretamente." });
+
+      // Return the first validation error message
+      response
+        .status(400)
+        .json({ error: Object.values(error.flatten().fieldErrors as Record<string, string[]>)[0][0] });
     }
   };
 }

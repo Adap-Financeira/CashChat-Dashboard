@@ -9,16 +9,34 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    phoneNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    documentType: {
+      type: String,
+      enum: ["CPF", "CNPJ"],
+      required: true,
+    },
+    documentNumber: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    companySegment: {
+      type: String,
+      required: false,
+    },
+    mainActivity: {
+      type: String,
+      required: false,
     },
   },
   {

@@ -5,6 +5,10 @@ export const createUserSchema = z.object({
   firebaseId: z.string().optional(),
   phoneNumber: z.string(),
   email: z.string().email(),
+  documentType: z.enum(["CPF", "CNPJ"]),
+  documentNumber: z.string(),
+  companySegment: z.string().optional(),
+  mainActivity: z.string().optional(),
   password: z.string().min(6),
 });
 

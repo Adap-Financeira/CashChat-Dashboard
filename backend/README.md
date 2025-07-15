@@ -40,4 +40,22 @@ Others
 Fixes
 
 - [x] Fix the size of charts to small screens.
-- [x] Fix the error in payment methods request to show the correct data.
+- [] Fix the error in payment methods request to show the correct data.
+  Talvez o problema seja porque não tenha os metodos de pagamento no banco de dados.
+  Mas está retornando 401 então parece ter a ver com o tokende validação.
+
+  TESTAR SE O CADASTRO ESTÁ CORRETO VIA POSTMAN
+  CASOS:
+
+  - [ ] CPF válido
+  - [ ] CPF inválido
+  - [ ] CNPJ válido
+  - [ ] CNPJ inválido
+  - [ ] Email válido
+  - [ ] Email inválido
+  - [ ] Senha válida
+  - [ ] Senha inválida
+  - [ ] Nome válido
+  - [ ] Nome inválido
+  - [ ] Telefone válido
+  - [ ] Telefone inválido
