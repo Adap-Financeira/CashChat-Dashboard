@@ -9,11 +9,13 @@ function getEnvVariable(key: string): string {
   return value.replace(/\\n/g, "\n"); // To handle line breaks in the private key
 }
 
+const decodedPrivateKey = Buffer.from(getEnvVariable("FIREBASE_PRIVATE_KEY"), "base64").toString("utf8");
+
 const credentials = {
   type: getEnvVariable("FIREBASE_TYPE"),
   project_id: getEnvVariable("FIREBASE_PROJECT_ID"),
   private_key_id: getEnvVariable("FIREBASE_PRIVATE_KEY_ID"),
-  private_key: getEnvVariable("FIREBASE_PRIVATE_KEY"),
+  private_key: decodedPrivateKey.replace(/\\n/g, "\n"),
   client_email: getEnvVariable("FIREBASE_CLIENT_EMAIL"),
   client_id: getEnvVariable("FIREBASE_CLIENT_ID"),
   auth_uri: getEnvVariable("FIREBASE_AUTH_URI"),
