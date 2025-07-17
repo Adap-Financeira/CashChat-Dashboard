@@ -16,10 +16,10 @@ User
 - [x] name
 - [x] email
 - [x] phoneNumber (whatsapp)
-- [ ] documentType (CPF/CNPJ)
-- [ ] documentNumber
-- [ ] segment (segmento da empresa)
-- [ ] mainActivity (atividade principal)
+- [x] documentType (CPF/CNPJ)
+- [x] documentNumber
+- [x] segment (segmento da empresa)
+- [x] mainActivity (atividade principal)
 - [x] password
 
 Reports
@@ -43,19 +43,3 @@ Fixes
 - [] Fix the error in payment methods request to show the correct data.
   Talvez o problema seja porque não tenha os metodos de pagamento no banco de dados.
   Mas está retornando 401 então parece ter a ver com o tokende validação.
-
-  TESTAR SE O CADASTRO ESTÁ CORRETO VIA POSTMAN
-  CASOS:
-
-  - [ ] CPF válido
-  - [ ] CPF inválido
-  - [ ] CNPJ válido
-  - [ ] CNPJ inválido
-  - [ ] Email válido
-  - [ ] Email inválido
-  - [ ] Senha válida
-  - [ ] Senha inválida
-  - [ ] Nome válido
-  - [ ] Nome inválido
-  - [ ] Telefone válido
-  - [ ] Telefone inválido

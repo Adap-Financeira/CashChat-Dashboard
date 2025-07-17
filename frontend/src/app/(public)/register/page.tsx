@@ -44,7 +44,6 @@ export default function Register() {
 
   async function onSubmit(data: RegisterSchemaType) {
     try {
-      console.log(data);
       const response = await register(data);
 
       if (response.success) {
