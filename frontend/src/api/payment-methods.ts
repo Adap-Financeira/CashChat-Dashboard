@@ -1,3 +1,4 @@
+"use server";
 import { getRequiredCookie } from "@/app/actions";
 
 export async function getPaymentMethods(): Promise<
