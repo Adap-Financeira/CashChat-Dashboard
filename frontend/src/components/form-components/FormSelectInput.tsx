@@ -31,7 +31,7 @@ export default function FormSelectInput({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
+        <FormItem className="flex-1">
           <FormLabel>{label}</FormLabel>
           <Select
             open={isOpen}

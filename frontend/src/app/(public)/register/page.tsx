@@ -14,14 +14,17 @@ import FormPasswordInput from "@/components/form-components/FormPasswordInput";
 import FormPhoneInput from "@/components/form-components/FormPhoneInput";
 import { register } from "@/api/auth";
 import FormCheckBox from "@/components/form-components/FormCheckBox";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import FreeTrialInfo from "@/components/FreeTrialInfo";
 import { ChevronLeft } from "lucide-react";
 import { content } from "@/content";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import FormCpfInput from "@/components/form-components/FormCpfInput";
+import FormCnpjInput from "@/components/form-components/FormCnpjInput";
+import FormSelectInput from "@/components/form-components/FormSelectInput";
 
 export default function Register() {
   const [pending] = useState(false);
+  const [documentType, setDocumentType] = useState("CPF");
   const router = useRouter();
 
   const form = useForm<RegisterSchemaType>({
@@ -31,11 +34,17 @@ export default function Register() {
       email: "",
       phoneNumber: "",
       password: "",
+      documentType: "CPF",
+      documentNumber: "",
+      segment: "",
+      mainActivity: "",
+      termsAndConditions: false,
     },
   });
 
   async function onSubmit(data: RegisterSchemaType) {
     try {
+      console.log(data);
       const response = await register(data);
 
       if (response.success) {
@@ -106,6 +115,71 @@ export default function Register() {
                     placeholder="Ex.: email@email.com"
                   />
 
+                  <div className="flex items-center gap-2 w-full">
+                    <ToggleGroup
+                      type="single"
+                      value={documentType}
+                      onValueChange={(value) => {
+                        setDocumentType(value);
+                        form.setValue("documentNumber", "");
+                        form.setValue("documentType", value as "CPF" | "CNPJ");
+                      }}
+                    >
+                      <ToggleGroupItem value="CPF" aria-label="Toggle bold">
+                        <span
+                          className={`text-xs ${
+                            documentType === "CPF" ? "font-bold text-green-600" : "text-muted-foreground"
+                          }`}
+                        >
+                          CPF
+                        </span>
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="CNPJ" aria-label="Toggle italic">
+                        <span
+                          className={`text-xs ${
+                            documentType === "CNPJ" ? "font-bold text-green-600" : "text-muted-foreground"
+                          }`}
+                        >
+                          CNPJ
+                        </span>
+                      </ToggleGroupItem>
+                    </ToggleGroup>
+
+                    {documentType === "CPF" ? (
+                      <FormCpfInput
+                        control={form.control}
+                        name="documentNumber"
+                        placeholder="Ex.: 123.456.789-00"
+                      />
+                    ) : (
+                      <FormCnpjInput
+                        control={form.control}
+                        name="documentNumber"
+                        placeholder="Ex.: 12.345.678/0001-90"
+                      />
+                    )}
+                  </div>
+
+                  {documentType === "CNPJ" ? (
+                    <div className="flex items-start gap-2 w-full">
+                      <FormSelectInput
+                        control={form.control}
+                        name="segment"
+                        label="Segmento"
+                        placeholder="Ex.: Comércio"
+                        options={content.register.segmentOptions}
+                      />
+
+                      <FormSelectInput
+                        control={form.control}
+                        name="mainActivity"
+                        label="Atividade principal"
+                        placeholder="Ex.: Varejo"
+                        options={content.register.mainActivityOptions}
+                      />
+                    </div>
+                  ) : null}
+
                   <FormPhoneInput
                     control={form.control}
                     name="phoneNumber"
@@ -119,17 +193,12 @@ export default function Register() {
                     placeholder="Ex.: 123546"
                   />
 
-                  {/* Checkbox Label for confirmation */}
-                  {/* <FormCheckBox control={form.control} name="confirm" label="Confirmar" /> */}
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="terms" />
-                    <Label className="text-xs" htmlFor="terms">
-                      Declaro ter lido e aceitado os{" "}
-                      <Link href="#" className="text-green-700 font-bold hover:underline">
-                        termos e políticas de serviço
-                      </Link>
-                    </Label>
-                  </div>
+                  <FormCheckBox
+                    control={form.control}
+                    name="termsAndConditions"
+                    label="Declaro ter lido e aceitado os termos e políticas de serviço"
+                    className="mt-2"
+                  />
                 </div>
 
                 <Button
@@ -141,7 +210,7 @@ export default function Register() {
               </form>
             </Form>
 
-            <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
+            <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground mb-0 md:mb-10">
               <p>Já tem uma conta?</p>
               <Link href="/login" className="font-bold text-green-600 hover:underline">
                 Entrar
@@ -170,9 +239,9 @@ export default function Register() {
         </div>
 
         {/* Rodapé */}
-        <footer className="mt-5 mb-10">
+        <div className="flex md:hidden mt-5 mb-10">
           <p className="text-xs text-muted-foreground">{content.register.ctaText}</p>
-        </footer>
+        </div>
       </div>
     </div>
   );
