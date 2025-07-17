@@ -5,12 +5,68 @@ export const loginSchema = z.object({
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
 });
 
-export const registerSchema = z.object({
-  name: z.string().min(3, "Campo nome é obrigatório"),
-  email: z.string().email({ message: "Email inválido" }),
-  phoneNumber: z.string().min(11, "Campo telefone é obrigatório"),
-  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
-});
+const cleanNonDigits = (value: string) => value.replace(/\D/g, "");
+const nameRegex = /^[a-zA-Z\u00C0-\u017F\s]+$/;
+
+export const registerSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "O campo nome é obrigatório.")
+      .regex(nameRegex, "O nome deve conter apenas letras e espaços."),
+    email: z.string().email({ message: "Email inválido." }),
+    phoneNumber: z
+      .string()
+      .transform(cleanNonDigits)
+      .pipe(z.string().length(11, "O telefone deve ter 11 dígitos (DDD + número).")),
+    password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres."),
+    documentType: z.enum(["CPF", "CNPJ"]),
+    documentNumber: z.string().transform(cleanNonDigits), // Just clean it here
+    segment: z.string().optional(),
+    mainActivity: z.string().optional(),
+    termsAndConditions: z.boolean().refine((value) => value, {
+      message: "Você deve aceitar os termos e condições.",
+    }),
+  })
+  .superRefine((data, ctx) => {
+    // CPF validation
+    if (data.documentType === "CPF") {
+      if (data.documentNumber.length !== 11) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "O CPF deve ter exatamente 11 dígitos.",
+          path: ["documentNumber"], // Path to the field that has the error
+        });
+      }
+    }
+
+    // CNPJ validation
+    if (data.documentType === "CNPJ") {
+      if (data.documentNumber.length !== 14) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "O CNPJ deve ter exatamente 14 dígitos.",
+          path: ["documentNumber"],
+        });
+      }
+
+      if (data.segment === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "O segmento é obrigatório.",
+          path: ["segment"],
+        });
+      }
+
+      if (data.mainActivity === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "A atividade principal é obrigatória.",
+          path: ["mainActivity"],
+        });
+      }
+    }
+  });
 
 export type RegisterSchemaType = z.infer<typeof registerSchema>;
 

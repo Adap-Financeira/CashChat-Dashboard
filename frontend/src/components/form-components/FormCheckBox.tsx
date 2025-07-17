@@ -28,19 +28,21 @@ export default function FormCheckBox<T extends FieldValues>({
       control={control}
       name={name}
       render={() => (
-        <FormItem className={`flex flex-row items-center space-x-2 space-y-0 ${className}`}>
-          <FormControl>
-            <Checkbox
-              {...field}
-              checked={!!value}
-              onCheckedChange={(checked) => {
-                onChange(checked);
-              }}
-            />
-          </FormControl>
-          <FormLabel className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            {label}
-          </FormLabel>
+        <FormItem className={`flex flex-col items-start space-y-0 ${className}`}>
+          <div className="flex items-center space-x-2">
+            <FormControl>
+              <Checkbox
+                {...field}
+                checked={!!value}
+                onCheckedChange={(checked) => {
+                  onChange(checked);
+                }}
+              />
+            </FormControl>
+            <FormLabel className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {label}
+            </FormLabel>
+          </div>
           <FormMessage />
         </FormItem>
       )}

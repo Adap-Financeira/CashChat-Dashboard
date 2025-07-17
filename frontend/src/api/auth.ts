@@ -3,12 +3,15 @@ import { RegisterSchemaType } from "@/schemas/schemas";
 
 export async function register(data: RegisterSchemaType) {
   try {
+    // Removing termsAndConditions from data
+    const { termsAndConditions, ...userData } = data;
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...data, phoneNumber: `55${data.phoneNumber}` }),
+      body: JSON.stringify({ ...userData, phoneNumber: `55${userData.phoneNumber}` }),
       cache: "no-store",
     });
 

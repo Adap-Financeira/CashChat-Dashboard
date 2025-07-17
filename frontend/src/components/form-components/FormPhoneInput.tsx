@@ -17,22 +17,22 @@ export default function FormPhoneInput({ control, name, label, placeholder }: Fo
     if (!digits) {
       return "";
     }
-    
+
     // 2. Apply formatting progressively using regex.
     // This approach avoids adding formatting characters prematurely.
     let formattedValue = digits;
-    
+
     // Adds `(XX)` and a space after the first 2 digits are entered.
     // e.g., "119" becomes "(11) 9"
     formattedValue = formattedValue.replace(/^(\d{2})(\d)/, "($1) $2");
-    
+
     // Adds a hyphen after the 7th digit (2 for DDD + 5 for the first part of the number).
     // e.g., "(11) 999998" becomes "(11) 99999-8"
     formattedValue = formattedValue.replace(/(\d{5})(\d)/, "$1-$2");
 
     return formattedValue;
   }, []);
-  
+
   // This function remains the same, it correctly strips all formatting.
   const unformatPhone = (value: string) => value.replace(/\D/g, "");
 
@@ -49,12 +49,16 @@ export default function FormPhoneInput({ control, name, label, placeholder }: Fo
             <FormLabel>{label}</FormLabel>
             <FormControl>
               <Input
-                placeholder={placeholder ?? "(11) 99999-9999"}
+                placeholder={placeholder}
                 className="h-10"
                 value={formatPhone(rawValue)}
                 onChange={(e) => {
                   // Unformat the input from the user to get raw digits
                   const cleaned = unformatPhone(e.target.value);
+
+                  if (cleaned.length > 11) {
+                    return;
+                  }
                   // Update the form state with only the raw digits
                   field.onChange(cleaned);
                 }}
