@@ -1,129 +1,155 @@
-// import * as userRepository from "../repositories/user-repository";
-// import * as permissionRepository from "../repositories/permission-repository";
-// import Transaction from "../models/TransactionHotmart";
-// import * as hotmartRepository from "../repositories/hotmart-repository";
-// import { TransactionHotmartDto } from "../dto/transaction-hotmart";
-// import { CreateUserType } from "../schemas/user-schema";
+import mongoose from "mongoose";
+import { isWithinLast32Days } from "../utils/date";
+import { CustomError } from "../utils/errors";
+import * as permissionService from "../services/permission-services";
+import * as userService from "../services/user-service";
 
-// /**
-//  * Finds or creates a user based on the email
-//  * @param email User's email
-//  * @param name User's name (optional)
-//  * @param phoneNumber User's phone number (optional)
-//  * @returns The user object
-//  */
-// export async function findOrCreateUser(email: string, name?: string, phoneNumber?: string) {
-//   try {
-//     // Try to find the user first
-//     const existingUser = await userRepository.findByEmail(email);
-//     if (existingUser) {
-//       return existingUser;
-//     }
+const HOTMART_API_URL = "https://developers.hotmart.com/payments/api/v1";
+const HOTMART_ACCESS_TOKEN_BASE_URL = "https://api-sec-vlc.hotmart.com/security/oauth/token";
 
-//     const newUser: CreateUserType = {
-//       email,
-//       name: name || email.split("@")[0], // Use part of email as name if not provided
-//       phoneNumber: phoneNumber || "", // Empty string if not provided
-//       password: "",
-//     };
+export async function getHotmartAccessToken(): Promise<{
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
+  jti: string;
+} | null> {
+  try {
+    const response = await fetch(
+      `${HOTMART_ACCESS_TOKEN_BASE_URL}?grant_type=client_credentials&client_id=${process.env.HOTMART_CLIENT_ID}&client_secret=${process.env.HOTMART_CLIENT_SECRET}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${process.env.HOTMART_BASIC_TOKEN}`,
+        },
+      }
+    );
 
-//     await userRepository.create(newUser);
+    const result = await response.json();
 
-//     // Return the newly created user
-//     return await userRepository.findByEmail(email);
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 
-// /**
-//  * Processes a Hotmart transaction and creates/updates user and permissions
-//  * @param transactionData The transaction data from Hotmart webhook
-//  * @returns The created transaction
-//  */
-// export async function processHotmartTransaction(transactionData: {
-//   email: string;
-//   transactionId: string;
-//   productId: string;
-//   status: string;
-//   startDate: Date;
-//   endDate: Date;
-//   permissions: string[];
-//   name?: string;
-//   phoneNumber?: string;
-// }) {
-//   try {
-//     // Check if transaction already exists (idempotency)
-//     const existingTransaction = await Transaction.findOne({
-//       transactionId: transactionData.transactionId,
-//     });
+export async function getHotmartTransaction(id: string, accessToken: string) {
+  try {
+    const response = await fetch(`${HOTMART_API_URL}/sales/history?transaction=${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-//     if (existingTransaction) {
-//       // If transaction exists but status has changed, update it
-//       if (existingTransaction.status !== transactionData.status) {
-//         existingTransaction.status = transactionData.status;
-//         // No need to set updatedAt as it's not in the model
-//         await existingTransaction.save();
-//       }
-//       return existingTransaction;
-//     }
+    const result = await response.json();
 
-//     // Find or create user
-//     const user = await findOrCreateUser(
-//       transactionData.email,
-//       transactionData.name,
-//       transactionData.phoneNumber
-//     );
+    return result;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
 
-//     // Create transaction record
-//     // Only include fields that exist in the Transaction model
-//     const transaction = await createTransactionHotmart({
-//       customerEmail: transactionData.email, // Field name is customerEmail in the model
-//       hotmartTransactionId: transactionData.transactionId, // Field name is hotmartTransactionId in the model
-//       productId: transactionData.productId,
-//       status: transactionData.status,
-//       // startDate, endDate, and permissions are not in the Transaction model
-//     });
+export async function validateTransaction(id: string) {
+  try {
+    const accessToken = await getHotmartAccessToken();
 
-//     // Create or update permissions based on transaction
-//     if (user && transaction.status === "completed") {
-//       // Check if permission already exists
-//       const existingPermission = await permissionRepository.findByUserIdAndProductId(
-//         user._id.toString(),
-//         transaction.productId
-//       );
+    if (!accessToken) {
+      throw new CustomError("Erro ao obter o token de acesso", 500);
+    }
 
-//       // Use the endDate from the transaction data since it's not in the Transaction model
-//       const expiresAt = transactionData.endDate;
+    const transaction = await getHotmartTransaction(id, accessToken.access_token);
 
-//       if (existingPermission) {
-//         // Update existing permission
-//         existingPermission.access = true;
-//         existingPermission.expiresAt = expiresAt;
-//         // updatedAt will be automatically set by Mongoose
-//         await permissionRepository.update(existingPermission, existingPermission._id.toString());
-//       } else {
-//         // Create new permission
-//         await permissionRepository.create({
-//           userId: user._id.toString(),
-//           productId: transaction.productId,
-//           phoneNumber: user.phoneNumber || "",
-//           access: true,
-//           expiresAt,
-//         });
-//       }
-//     }
+    console.log("productId:", transaction.items[0].product.id);
 
-//     return transaction;
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+    if (!transaction) {
+      throw new CustomError("Erro ao obter a transação", 500);
+    }
 
-// export async function createTransactionHotmart(data: TransactionHotmartDto) {
-//   try {
-//     return await hotmartRepository.create(data);
-//   } catch (error) {
-//     throw error;
-//   }
-// }
+    // Check if the transaction is approved (APPROVED or COMPLETED)
+    if (
+      transaction.items[0].purchase.status !== "APPROVED" &&
+      transaction.items[0].purchase.status !== "COMPLETED"
+    ) {
+      throw new CustomError("Transação não aprovada", 400);
+    }
+
+    // Check if the approved date is within the last 32 days
+    if (!isWithinLast32Days(transaction.items[0].purchase.approved_date)) {
+      throw new CustomError("Só é possível validar transações de no máximo 32 dias atrás.", 400);
+    }
+
+    return transaction;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function activateNewSubscription(email: string, productId: string) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // Check if the product id is one of the our two plans
+  const expiresAt =
+    productId === "5591669" // Monthly plan
+      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+      : productId === "5564137" // Annual plan
+      ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 365 days
+      : null;
+
+  if (!expiresAt) {
+    throw new CustomError("Produto inválido", 400);
+  }
+
+  try {
+    const user = await userService.findUserByEmail(email);
+    // Create dashboard permission
+    await permissionService.createOrUpdatePermission(
+      {
+        userId: user._id.toString(),
+        productId: "dashboard",
+        phoneNumber: user.phoneNumber,
+        access: true,
+        expiresAt,
+      },
+      session
+    );
+
+    // Create chatbot permission
+    await permissionService.createOrUpdatePermission(
+      {
+        userId: user._id.toString(),
+        productId: "chatbot",
+        phoneNumber: user.phoneNumber,
+        access: true,
+        expiresAt,
+      },
+      session
+    );
+
+    // Create categories permission
+    await permissionService.createOrUpdatePermission(
+      {
+        userId: user._id.toString(),
+        productId: "categories",
+        phoneNumber: user.phoneNumber,
+        access: true,
+        expiresAt,
+      },
+      session
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+}

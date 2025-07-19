@@ -21,6 +21,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import FormCpfInput from "@/components/form-components/FormCpfInput";
 import FormCnpjInput from "@/components/form-components/FormCnpjInput";
 import FormSelectInput from "@/components/form-components/FormSelectInput";
+import StepBackButton from "@/components/StepBackButton";
 
 export default function Register() {
   const [pending] = useState(false);
@@ -69,12 +70,7 @@ export default function Register() {
         <ThemeButton className="absolute top-4 right-4" />
 
         <header className="flex md:hidden flex-col items-center pt-5 relative">
-          <div className="flex items-center w-full mb-5">
-            <Link href="/" className="flex items-center text-green-600 font-bold hover:underline text-sm">
-              <ChevronLeft className="h-5 w-5" />
-              <span>Voltar</span>
-            </Link>
-          </div>
+          <StepBackButton href="/" />
 
           {/* Título Principal */}
           <div className="flex flex-col items-center">
