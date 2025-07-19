@@ -40,6 +40,4 @@ Others
 Fixes
 
 - [x] Fix the size of charts to small screens.
-- [] Fix the error in payment methods request to show the correct data.
-  Talvez o problema seja porque não tenha os metodos de pagamento no banco de dados.
-  Mas está retornando 401 então parece ter a ver com o tokende validação.
+- [x] Fix the error in payment methods request to show the correct data.

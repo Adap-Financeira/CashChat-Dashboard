@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { resetPasswordSchema } from "@/schemas/schemas";
 import { useAuth } from "@/context/AuthProvider";
 import Logo from "@/components/logo/Logo";
+import StepBackButton from "@/components/StepBackButton";
 
 interface FormErrors {
   email: string | undefined;
@@ -60,6 +61,7 @@ export default function ResetPassword() {
         </div>
 
         <div className="flex flex-col justify-center max-w-[320px] w-full py-10 m-auto">
+          <StepBackButton href="/" />
           <div className="flex flex-col max-w-[120px]">
             <Logo />
           </div>

@@ -147,6 +147,12 @@ export default function Login() {
                   Cadastre-se
                 </Link>
               </div>
+
+              <div className="flex items-center justify-center gap-1 mt-3 text-sm text-muted-foreground">
+                <Link href="/validate" className="font-bold text-green-600 hover:underline">
+                  Ativar assinatura
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -120,3 +120,9 @@ export const deleteTransactionSchema = z.object({
   id: z.string().min(1, "Campo id é obrigatório"),
 });
 export type DeleteTransactionType = z.infer<typeof deleteTransactionSchema>;
+
+export const validateSchema = z.object({
+  id: z.string().min(1, "Campo id é obrigatório"),
+  email: z.string().email({ message: "Email inválido" }),
+});
+export type ValidateType = z.infer<typeof validateSchema>;

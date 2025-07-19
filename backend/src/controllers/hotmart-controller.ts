@@ -1,3 +1,51 @@
+import { Request, Response, Express, Router } from "express";
+import { CustomError } from "../utils/errors";
+import validateRequestBody from "../middleware/request-body-validator";
+import { validateSchema } from "../schemas/hotmart-schemas";
+import { activateNewSubscription, validateTransaction } from "../services/hotmart-service";
+
+export function hotmartController(server: Express) {
+  const hotmartRouter = Router();
+
+  hotmartRouter.post(
+    "/validate",
+    validateRequestBody(validateSchema),
+    async (req: Request, res: Response) => {
+      try {
+        const { id, email } = validateSchema.parse(req.body);
+
+        // De repente seria interessante comparar o email do usuário com o email retornado da hotmart
+        // para garantir se o usuário que está fazendo a requisição é o mesmo que fez a compra
+        // Preciso retornar o id do produto aqui de dentro
+        const validTransaction = await validateTransaction(id);
+
+        if (!validTransaction) {
+          throw new CustomError(
+            "Esta transação não atende aos requisitos necessários para ser ativada.",
+            400
+          );
+        }
+
+        const activation = await activateNewSubscription(email, validTransaction.items[0].product.id);
+
+        console.log("activation", activation);
+
+        res.status(200).json({ message: "Assinatura ativada com sucesso!" });
+      } catch (error) {
+        console.log(error);
+        if (error instanceof CustomError) {
+          res.status(error.statusCode).json({ error: error.message });
+          return;
+        }
+
+        res.status(500).json({ error: "Internal server error" });
+      }
+    }
+  );
+
+  server.use("/api/hotmart", hotmartRouter);
+}
+
 // import { Request, Response, Express, Router } from "express";
 // import { CustomError } from "../utils/errors";
 // import * as userRepository from "../repositories/user-repository";
